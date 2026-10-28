@@ -99,6 +99,22 @@
             margin-top: 10px;
             font-weight: bold;
         }
+        /* පිළිතුර රූපයක් (ප්‍රස්තාරයක්) වන විට */
+        .options label.img-opt {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .opt-img {
+            display: block;
+            max-width: 220px;
+            max-height: 180px;
+            width: auto;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+        }
         .wrong-box {
             background: #fff3f3;
             border: 1px solid #f5c6cb;
@@ -250,6 +266,29 @@
         selectTag.appendChild(fragment);
     }
 
+    // පිළිතුරක් රූප link එකක් නම් එය රූපයක් ලෙස පෙන්වීම (නැත්නම් කලින් වගේම අකුරු ලෙස)
+    function isImageLink(v) {
+        if (typeof v !== 'string') return false;
+        const s = v.trim();
+        if (!/^https?:\/\//i.test(s) || /\s/.test(s)) return false;
+        return /\.(png|jpe?g|gif|webp|svg|bmp)(\?.*)?$/i.test(s) ||
+               /drive\.google\.com|googleusercontent\.com|i\.ibb\.co|imgur\.com|imgbb\.com|postimg\.cc|githubusercontent\.com/i.test(s);
+    }
+
+    // Google Drive share link එකක් කෙලින්ම පෙන්විය හැකි රූප link එකක් බවට හැරවීම
+    function directImageLink(v) {
+        const s = v.trim();
+        const m = s.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/) || s.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([^&#]+)/);
+        return m ? "https://lh3.googleusercontent.com/d/" + m[1] : s;
+    }
+
+    function optionHTML(qNo, n, v) {
+        if (isImageLink(v)) {
+            return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${n})</span><img class="opt-img" src="${directImageLink(v)}" alt="පිළිතුර ${n}" loading="lazy"></label>`;
+        }
+        return `<label><input type="radio" name="q_${qNo}" value="${n}"> ${n}) ${v}</label>`;
+    }
+
     async function login() {
         const id = document.getElementById('studentId').value.trim();
         const pwd = document.getElementById('password').value.trim();
@@ -334,11 +373,11 @@
                             <p>${q.no}. ${q.q}</p>
                             ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;" loading="lazy"></div>` : ''}
                             <div class="options">
-                                <label><input type="radio" name="q_${q.no}" value="1"> 1) ${q.a}</label>
-                                <label><input type="radio" name="q_${q.no}" value="2"> 2) ${q.b}</label>
-                                <label><input type="radio" name="q_${q.no}" value="3"> 3) ${q.c}</label>
-                                <label><input type="radio" name="q_${q.no}" value="4"> 4) ${q.d}</label>
-                                <label><input type="radio" name="q_${q.no}" value="5"> 5) ${q.e}</label>
+                                ${optionHTML(q.no, 1, q.a)}
+                                ${optionHTML(q.no, 2, q.b)}
+                                ${optionHTML(q.no, 3, q.c)}
+                                ${optionHTML(q.no, 4, q.d)}
+                                ${optionHTML(q.no, 5, q.e)}
                             </div>
                         `;
                         qFragment.appendChild(qDiv);
