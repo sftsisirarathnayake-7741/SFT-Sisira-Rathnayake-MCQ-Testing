@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SFT MCQ Portal</title>
+    <!-- version: graph-answers-2 -->
     <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -266,25 +267,37 @@
         selectTag.appendChild(fragment);
     }
 
-    // පිළිතුරක් රූප link එකක් නම් එය රූපයක් ලෙස පෙන්වීම (නැත්නම් කලින් වගේම අකුරු ලෙස)
+    // පිළිතුරක් link එකක් (http/https) නම් එය රූපයක් ලෙස පෙන්වීම (නැත්නම් කලින් වගේම අකුරු ලෙස)
     function isImageLink(v) {
         if (typeof v !== 'string') return false;
         const s = v.trim();
-        if (!/^https?:\/\//i.test(s) || /\s/.test(s)) return false;
-        return /\.(png|jpe?g|gif|webp|svg|bmp)(\?.*)?$/i.test(s) ||
-               /drive\.google\.com|googleusercontent\.com|i\.ibb\.co|imgur\.com|imgbb\.com|postimg\.cc|githubusercontent\.com/i.test(s);
+        return /^https?:\/\/\S+$/i.test(s);
     }
 
     // Google Drive share link එකක් කෙලින්ම පෙන්විය හැකි රූප link එකක් බවට හැරවීම
     function directImageLink(v) {
         const s = v.trim();
-        const m = s.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/) || s.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([^&#]+)/);
+        const m = s.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/) ||
+                  s.match(/drive\.google\.com\/(?:open|uc|thumbnail)\?(?:.*&)?id=([^&#]+)/) ||
+                  s.match(/docs\.google\.com\/uc\?(?:.*&)?id=([^&#]+)/);
         return m ? "https://lh3.googleusercontent.com/d/" + m[1] : s;
+    }
+
+    // රූපය load නොවුණොත් link එක click කළ හැකි ලෙස පෙන්වීම
+    function imgFailed(img) {
+        const a = document.createElement('a');
+        a.href = img.getAttribute('data-src');
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerText = 'රූපය පෙන්විය නොහැක - මෙතනින් බලන්න';
+        a.style.fontSize = '13px';
+        img.replaceWith(a);
     }
 
     function optionHTML(qNo, n, v) {
         if (isImageLink(v)) {
-            return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${n})</span><img class="opt-img" src="${directImageLink(v)}" alt="පිළිතුර ${n}" loading="lazy"></label>`;
+            const src = directImageLink(v);
+            return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${n})</span><img class="opt-img" src="${src}" data-src="${v.trim()}" alt="පිළිතුර ${n}" referrerpolicy="no-referrer" onerror="imgFailed(this)"></label>`;
         }
         return `<label><input type="radio" name="q_${qNo}" value="${n}"> ${n}) ${v}</label>`;
     }
