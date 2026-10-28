@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SFT MCQ Portal</title>
+    <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Iskoola Pota', sans-serif;
+            font-family: 'Noto Serif Sinhala', 'Iskoola Pota', serif;
             background: #f0f2f5;
             margin: 0;
             padding: 20px;
+            text-rendering: optimizeLegibility;
         }
         .container {
             max-width: 700px;
@@ -29,12 +32,10 @@
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
         }
         input, select, button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
@@ -47,9 +48,14 @@
             cursor: pointer;
             font-weight: bold;
             margin-top: 10px;
+            transition: background 0.3s;
         }
         button:hover {
             background-color: #0b5ed7;
+        }
+        button:disabled {
+            background-color: #b0c4de;
+            cursor: not-allowed;
         }
         .hidden {
             display: none;
@@ -91,6 +97,7 @@
             color: red;
             text-align: center;
             margin-top: 10px;
+            font-weight: bold;
         }
         .wrong-box {
             background: #fff3f3;
@@ -110,27 +117,47 @@
     <div id="login-sec">
         <h2>SFT MCQ Portal - පිවිසෙන්න</h2>
         <div class="form-group">
-            <label>Student ID:</label>
+            <label style="font-weight: bold; color: #333;">Student ID:</label>
             <input type="text" id="studentId" placeholder="ඔබේ User ID එක ඇතුළත් කරන්න">
         </div>
         <div class="form-group">
-            <label>Password:</label>
+            <label style="font-weight: bold; color: #333;">Password:</label>
             <input type="password" id="password" placeholder="මුරපදය ඇතුළත් කරන්න">
         </div>
-        <button onclick="login()">පිවිසෙන්න</button>
+        <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
         <p id="login-error" class="error-msg"></p>
     </div>
 
     <!-- Dashboard / Paper Selection Section -->
     <div id="dashboard-sec" class="hidden">
         <h2 id="welcome-msg">සාදරයෙන් පිළිගනිමු!</h2>
+        
+        <!-- Paper Range Filter Section (වෙනස 4ක් වන පරිදි සකස් කළ කොටස) -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #e9ecef;">
+            <label style="color: #0d6efd; margin-bottom: 10px; font-weight: bold;">🔍 ප්‍රශ්න පත්‍ර පරාසය (Range) තෝරන්න (උදා: 1-5, 6-10):</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="flex: 1;">
+                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">සිට (From):</label>
+                    <input type="number" id="rangeStart" value="1" min="1" max="1000">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">දක්වා (To):</label>
+                    <input type="number" id="rangeEnd" value="5" min="1" max="1000">
+                </div>
+                <div style="flex: 1; align-self: flex-end;">
+                    <button type="button" onclick="generatePaperList()" style="margin-top: 0; padding: 12px;">ලැයිස්තුව පෙන්වන්න</button>
+                </div>
+            </div>
+            <p id="range-error" style="color: #dc3545; font-size: 13px; margin: 8px 0 0 0; font-weight: bold;"></p>
+        </div>
+
         <div class="form-group">
-            <label>ප්‍රශ්න පත්‍රය තෝරන්න (පත්‍ර 200ක් දක්වා):</label>
+            <label style="font-weight: bold; color: #333;">ප්‍රශ්න පත්‍රය තෝරන්න:</label>
             <select id="paperSelect">
-                <!-- ස්වයංක්‍රීයව ප්‍රශ්න පත්‍ර 200ක් ජනනය කිරීම සඳහා -->
+                <!-- ඩ්‍රොප්ඩවුන් මෙනුවට අදාළ පරාසය අනුව ප්‍රශ්න පත්‍ර 5ක් පමණක් පූරණය වේ -->
             </select>
         </div>
-        <button onclick="loadPaper()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
+        <button id="loadPaperBtn" onclick="loadPaper()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
         <p id="dashboard-error" class="error-msg"></p>
     </div>
 
@@ -140,7 +167,7 @@
        <p style="text-align: center; font-size: 1.1rem; font-weight: bold; color: #555; margin-bottom: 20px;">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake)</p>
        <p id="attempt-info" style="text-align: center; color: #0d6efd; font-weight: bold;"></p>
         <div id="questions-container"></div>
-        <button onclick="submitPaper()">උත්තර යොමු කරන්න (Submit)</button>
+        <button id="submitBtn" onclick="submitPaper()">උත්තර යොමු කරන්න (Submit)</button>
     </div>
 
     <!-- Result Section -->
@@ -154,7 +181,7 @@
             <div class="wrong-box">
                 <strong>⚠️ ඔබට වැරදුණු ප්‍රශ්න අංක:</strong>
                 <p id="wrong-q-list" style="margin-top: 5px; font-weight: bold;"></p>
-                <p style="font-size: 14px; margin-bottom: 0;">මෙම සිද්ධාන්ත නැවත කියවා බලා, ඊළඟ වාරයේදී (Attempt එකේදී) එම ප්‍රශ්න නිවැරදි කරගන්න!</p>
+                <p style="font-size: 14px; margin-bottom: 0;">මෙම සිද්ධාන්ත නැවත කියවා බලා, ඊළඟ වාරයේදී එම ප්‍රශ්න නිවැරදි කරගන්න!</p>
             </div>
         </div>
 
@@ -164,7 +191,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxX5nqFAiu6_HxzN7rKPEIOJrfgPPe5cdQq9_jel28_8fRlhY-TGMDthWMTNlcFR9i/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0kR0L9Yv_smxuDa06LL8l4Ac7dfH4NDOa_NAzXQZCkQ1r_3w1koR8o6CeDed9J8SGXg/exec"; 
 
     let currentStudentId = "";
     let currentPaperId = "";
@@ -172,94 +199,152 @@
     let maxAttempts = 3;
 
     window.onload = function() {
-        const selectTag = document.getElementById('paperSelect');
-        for (let i = 1; i <= 200; i++) {
-            let paperNum = i < 10 ? "0" + i : i;
-            let opt = document.createElement('option');
-            opt.value = "PAPER_" + paperNum;
-            opt.innerText = "ප්‍රශ්න පත්‍රය " + paperNum;
-            selectTag.appendChild(opt);
+        // මුල් අවස්ථාවේ 1 සිට 5 දක්වා පරාසය ස්වයංක්‍රීයව ලෝඩ් කිරීම
+        generatePaperList();
+
+        const savedId = localStorage.getItem('sft_student_id');
+        if (savedId) {
+            document.getElementById('studentId').value = savedId;
         }
     };
 
-    function login() {
+    // From සහ To අතර වෙනස හරියටම 4ක් (ප්‍රශ්න පත්‍ර 5ක්) වන පරිදි පරීක්ෂා කර ලැයිස්තුව සකස් කිරීම
+    function generatePaperList() {
+        const startInput = document.getElementById('rangeStart');
+        const endInput = document.getElementById('rangeEnd');
+        const rangeError = document.getElementById('range-error');
+        const selectTag = document.getElementById('paperSelect');
+        
+        let start = parseInt(startInput.value);
+        let end = parseInt(endInput.value);
+        rangeError.innerText = "";
+
+        if (isNaN(start) || isNaN(end)) {
+            rangeError.innerText = "කරුණාකර වලංගු අංක ඇතුළත් කරන්න!";
+            return;
+        }
+
+        // To සහ From අතර වෙනස 4ක් විය යුතුය (උදා: 5 - 1 = 4)
+        if ((end - start) !== 4) {
+            rangeError.innerText = "⚠️ 'From' සහ 'To' අතර වෙනස හරියටම 4ක් විය යුතුය (උදා: 1 සිට 5 දක්වා, 6 සිට 10 දක්වා).";
+            return;
+        }
+
+        if (start < 1 || end > 1000) {
+            rangeError.innerText = "පරාසය 1 සහ 1000 අතර තිබිය යුතුය!";
+            return;
+        }
+
+        selectTag.innerHTML = ""; // කලින් තිබූ ලැයිස්තුව ඉවත් කිරීම
+        const fragment = document.createDocumentFragment();
+
+        for (let i = start; i <= end; i++) {
+            let opt = document.createElement('option');
+            let formattedIdNum = "PAPER_" + (i < 10 ? "0" + i : i);
+            opt.value = formattedIdNum;
+
+            let formattedNum = i < 10 ? "0" + i : i;
+            opt.innerText = "ප්‍රශ්න පත්‍රය " + formattedNum;
+            fragment.appendChild(opt);
+        }
+        selectTag.appendChild(fragment);
+    }
+
+    async function login() {
         const id = document.getElementById('studentId').value.trim();
         const pwd = document.getElementById('password').value.trim();
         const errorTag = document.getElementById('login-error');
+        const loginBtn = document.getElementById('loginBtn');
 
         if (!id || !pwd) {
             errorTag.innerText = "කරුණාකර ID එක සහ Password එක ඇතුළත් කරන්න!";
             return;
         }
 
-        errorTag.innerText = "පරීක්ෂා කරමින් පවතී...";
+        loginBtn.disabled = true;
+        loginBtn.innerText = "පරීක්ෂා කරමින් පවතී...";
+        errorTag.innerText = "";
 
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "login", studentId: id, password: pwd })
-        })
-        .then(res => res.json())
-        .then(data => {
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "login", studentId: id, password: pwd })
+            });
+            const data = await response.json();
+
             if (data.status === "success") {
                 currentStudentId = id;
+                localStorage.setItem('sft_student_id', id);
                 document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + data.name + "!";
                 document.getElementById('login-sec').classList.add('hidden');
                 document.getElementById('dashboard-sec').classList.remove('hidden');
             } else {
                 errorTag.innerText = data.message;
             }
-        })
-        .catch(err => {
-            errorTag.innerText = "දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+        } catch (err) {
+            errorTag.innerText = "ජාල දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
             console.error(err);
-        });
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerText = "පිවිසෙන්න";
+        }
     }
 
-    function loadPaper() {
+    async function loadPaper() {
         currentPaperId = document.getElementById('paperSelect').value;
         const errorTag = document.getElementById('dashboard-error');
-        errorTag.innerText = "ප්‍රශ්න පත්‍රය ලෝඩ් වෙමින් පවතී...";
+        const loadBtn = document.getElementById('loadPaperBtn');
         
-        // ප්‍රශ්න පත්‍ර අංකය (උදා: PAPER_01 -> 01) ලබාගෙන Title එක යාවත්කාලීන කිරීම
+        loadBtn.disabled = true;
+        errorTag.innerText = "ප්‍රශ්න පත්‍රය ලෝඩ් වෙමින් පවතී, කරුණාකර රැඳී සිටින්න...";
+        
         let paperNumberStr = currentPaperId.replace("PAPER_", "");
         document.getElementById('paper-title').innerText = "ප්‍රශ්න පත්‍රය " + paperNumberStr;
 
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ 
-                action: "getPaper", 
-                studentId: currentStudentId, 
-                paperId: currentPaperId 
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ 
+                    action: "getPaper", 
+                    studentId: currentStudentId, 
+                    paperId: currentPaperId 
+                })
+            });
+            const data = await response.json();
+
             if (data.status === "success") {
                 let prevAttempts = (data.currentAttempt !== undefined) ? data.currentAttempt : 0;
                 currentAttempt = prevAttempts + 1;
                 let attemptsLeft = maxAttempts - currentAttempt;
                 
-                document.getElementById('attempt-info').innerText = `මෙය ඔබගේ ${currentAttempt} වන උත්සාහයයි (Attempts ඉතිරි: ${attemptsLeft})`;
+                document.getElementById('attempt-info').innerText = `මෙය ඔබගේ හරියටම ${currentAttempt} වන උත්සාහයයි (Attempts ඉතිරි: ${attemptsLeft})`;
 
                 let qContainer = document.getElementById('questions-container');
                 qContainer.innerHTML = "";
 
                 if (data.questions && data.questions.length > 0) {
+                    const qFragment = document.createDocumentFragment();
+                    
                     data.questions.forEach((q) => {
-                        qContainer.innerHTML += `
-                            <div class="question" data-qid="${q.no}">
-                                <p>${q.no}. ${q.q}</p>
-                                ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;"></div>` : ''}
-                                <div class="options">
-                                    <label><input type="radio" name="q_${q.no}" value="1"> 1) ${q.a}</label>
-                                    <label><input type="radio" name="q_${q.no}" value="2"> 2) ${q.b}</label>
-                                    <label><input type="radio" name="q_${q.no}" value="3"> 3) ${q.c}</label>
-                                    <label><input type="radio" name="q_${q.no}" value="4"> 4) ${q.d}</label>
-                                    <label><input type="radio" name="q_${q.no}" value="5"> 5) ${q.e}</label>
-                                </div>
+                        let qDiv = document.createElement('div');
+                        qDiv.className = "question";
+                        qDiv.setAttribute('data-qid', q.no);
+                        
+                        qDiv.innerHTML = `
+                            <p>${q.no}. ${q.q}</p>
+                            ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;" loading="lazy"></div>` : ''}
+                            <div class="options">
+                                <label><input type="radio" name="q_${q.no}" value="1"> 1) ${q.a}</label>
+                                <label><input type="radio" name="q_${q.no}" value="2"> 2) ${q.b}</label>
+                                <label><input type="radio" name="q_${q.no}" value="3"> 3) ${q.c}</label>
+                                <label><input type="radio" name="q_${q.no}" value="4"> 4) ${q.d}</label>
+                                <label><input type="radio" name="q_${q.no}" value="5"> 5) ${q.e}</label>
                             </div>
                         `;
+                        qFragment.appendChild(qDiv);
                     });
+
+                    qContainer.appendChild(qFragment);
 
                     document.getElementById('dashboard-sec').classList.add('hidden');
                     document.getElementById('result-sec').classList.add('hidden');
@@ -271,38 +356,79 @@
             } else {
                 errorTag.innerText = data.message;
             }
-        })
-        .catch(err => {
+        } catch (err) {
             errorTag.innerText = "ප්‍රශ්න පත්‍රය ලබාගැනීමේ දෝෂයක් සිදු විය.";
             console.error(err);
-        });
+        } finally {
+            loadBtn.disabled = false;
+        }
     }
 
-    function submitPaper() {
+    async function submitPaper() {
         let answers = {};
+        let unansweredQuestions = [];
         let questionDivs = document.querySelectorAll('.question');
+        const submitBtn = document.getElementById('submitBtn');
         
+        questionDivs.forEach((div) => {
+            div.style.border = "1px solid #eee";
+            div.style.paddingBottom = "15px";
+            div.style.borderRadius = "0px";
+            div.style.backgroundColor = "transparent";
+        });
+
         questionDivs.forEach((div) => {
             let qNo = div.getAttribute('data-qid');
             let radios = document.getElementsByName('q_' + qNo);
+            let answered = false;
             for (let r of radios) {
                 if (r.checked) {
                     answers[qNo] = r.value;
+                    answered = true;
                 }
+            }
+            if (!answered) {
+                unansweredQuestions.push(qNo);
             }
         });
 
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "submitPaper",
-                studentId: currentStudentId,
-                paperId: currentPaperId,
-                answers: answers
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
+        if (unansweredQuestions.length > 0) {
+            let confirmMsg = `⚠️ ඔබට තවමත් පහත ප්‍රශ්න සඳහා පිළිතුරු ලබාදී නොමැත:\nප්‍රශ්න අංක: ${unansweredQuestions.join(", ")}\n\nඔබට මෙම හිස් ප්‍රශ්න එලෙසම (ලකුණු නොලැබෙන පරිදි) Submit කිරීමට අවශ්‍යද?`;
+            
+            if (!confirm(confirmMsg)) {
+                unansweredQuestions.forEach((qNo) => {
+                    let qDiv = document.querySelector(`.question[data-qid="${qNo}"]`);
+                    if (qDiv) {
+                        qDiv.style.border = "2px solid #dc3545";
+                        qDiv.style.borderRadius = "5px";
+                        qDiv.style.backgroundColor = "#fff8f8";
+                        qDiv.style.padding = "10px";
+                    }
+                });
+                
+                let firstUnanswered = document.querySelector(`.question[data-qid="${unansweredQuestions[0]}"]`);
+                if (firstUnanswered) {
+                    firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = "ප්‍රතිඵල සකස් කරමින් පවතී...";
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "submitPaper",
+                    studentId: currentStudentId,
+                    paperId: currentPaperId,
+                    answers: answers
+                })
+            });
+            const data = await response.json();
+
             if (data.status === "success") {
                 document.getElementById('exam-sec').classList.add('hidden');
                 document.getElementById('result-sec').classList.remove('hidden');
@@ -314,7 +440,7 @@
                     document.getElementById('wrong-questions-container').classList.remove('hidden');
                 } else {
                     document.getElementById('wrong-q-list').innerText = "කිසිදු ප්‍රශ්නයක් වැරදී නැත! සියල්ල නිවැරදියි. 🎉";
-                    document.getElementById('wrong-questions-container').classList.remove('hidden');
+                    document.getElementById('wrong-questions-container').classList.add('hidden');
                 }
 
                 if (data.attempt < maxAttempts) {
@@ -326,11 +452,13 @@
             } else {
                 alert(data.message);
             }
-        })
-        .catch(err => {
+        } catch (err) {
             alert("ප්‍රතිඵල යැවීමේදී දෝෂයක් සිදු විය.");
             console.error(err);
-        });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "උත්තර යොමු කරන්න (Submit)";
+        }
     }
 </script>
 
