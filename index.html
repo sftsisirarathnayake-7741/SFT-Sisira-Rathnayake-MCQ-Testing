@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SFT MCQ Portal</title>
-    <!-- version: banner-1 -->
+    <!-- version: secure-1 -->
     <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -116,6 +116,40 @@
             border-radius: 4px;
             background: #fff;
         }
+        /* ප්‍රශ්න පත්‍රය copy කිරීම, select කිරීම අපහසු කිරීම */
+        #exam-sec, #result-sec {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            position: relative;
+        }
+        #exam-sec img {
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+        #exam-sec label img { pointer-events: none; }
+        /* ශිෂ්‍යයාගේ ID එක සහිත watermark එක */
+        #exam-watermark {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+        #exam-watermark span {
+            position: absolute;
+            transform: rotate(-30deg);
+            font-size: 22px;
+            font-weight: bold;
+            color: rgba(13, 110, 253, 0.07);
+            white-space: nowrap;
+        }
+        /* Print කිරීම අවහිර කිරීම */
+        @media print {
+            body * { display: none !important; }
+            body::after { content: "SFT MCQ Portal - මුද්‍රණය කිරීමට අවසර නැත"; display: block; font-size: 20px; padding: 40px; }
+        }
         .wrong-box {
             background: #fff3f3;
             border: 1px solid #f5c6cb;
@@ -180,6 +214,7 @@
 
     <!-- Exam Section -->
     <div id="exam-sec" class="hidden">
+       <div id="exam-watermark" aria-hidden="true"></div>
        <img id="paper-banner" class="hidden" alt="ප්‍රශ්න පත්‍රය" style="width: 100%; height: auto; vertical-align: top; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
        <h2 id="paper-title" style="text-align: center;">ප්‍රශ්න පත්‍රය</h2>
        <p style="text-align: center; font-size: 1.1rem; font-weight: bold; color: #555; margin-bottom: 20px;">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake)</p>
@@ -212,6 +247,7 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0kR0L9Yv_smxuDa06LL8l4Ac7dfH4NDOa_NAzXQZCkQ1r_3w1koR8o6CeDed9J8SGXg/exec"; 
 
     let currentStudentId = "";
+    let authToken = ""; // Login වූ විට Server එකෙන් ලැබෙන රහස් token එක (page එක refresh කළ විට මැකේ)
     let currentPaperId = "";
     let currentAttempt = 1;
     let maxAttempts = 3;
@@ -303,6 +339,54 @@
         return `<label><input type="radio" name="q_${qNo}" value="${n}"> ${n}) ${v}</label>`;
     }
 
+    // Login කල් ඉකුත් වූ විට නැවත Login පිටුවට යැවීම
+    function handleAuth(data) {
+        if (data && data.status === "auth") {
+            authToken = "";
+            alert(data.message || "කරුණාකර නැවත පිවිසෙන්න.");
+            location.reload();
+            return true;
+        }
+        return false;
+    }
+
+    // ප්‍රශ්න පත්‍රය පුරා ශිෂ්‍යයාගේ ID එක සහිත watermark එක
+    function buildWatermark() {
+        const wm = document.getElementById('exam-watermark');
+        wm.innerHTML = "";
+        const exam = document.getElementById('exam-sec');
+        const h = Math.max(exam.scrollHeight, 1200);
+        const text = "SFT · " + currentStudentId;
+        for (let y = 40; y < h; y += 170) {
+            for (let x = -60; x < 700; x += 260) {
+                const sp = document.createElement('span');
+                sp.textContent = text;
+                sp.style.left = (x + ((y / 170) % 2) * 120) + "px";
+                sp.style.top = y + "px";
+                wm.appendChild(sp);
+            }
+        }
+    }
+
+    // Copy, right-click, save, print, view-source යතුරු අවහිර කිරීම (ප්‍රශ්න පත්‍රය විවෘත විට)
+    function examOpen() {
+        return !document.getElementById('exam-sec').classList.contains('hidden');
+    }
+    document.addEventListener('contextmenu', function(e) { if (examOpen()) e.preventDefault(); });
+    ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function(ev) {
+        document.addEventListener(ev, function(e) {
+            if (examOpen() && !(e.target && e.target.tagName === 'INPUT')) e.preventDefault();
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        const k = (e.key || "").toLowerCase();
+        const ctrl = e.ctrlKey || e.metaKey;
+        if (k === 'f12' || (ctrl && ['c', 'x', 's', 'p', 'u', 'a'].indexOf(k) !== -1) ||
+            (ctrl && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {
+            if (examOpen() || k === 'u' || k === 'f12') e.preventDefault();
+        }
+    });
+
     async function login() {
         const id = document.getElementById('studentId').value.trim();
         const pwd = document.getElementById('password').value.trim();
@@ -327,7 +411,9 @@
 
             if (data.status === "success") {
                 currentStudentId = id;
+                authToken = data.token || "";
                 localStorage.setItem('sft_student_id', id);
+                document.getElementById('password').value = "";
                 document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + data.name + "!";
                 document.getElementById('login-sec').classList.add('hidden');
                 document.getElementById('dashboard-sec').classList.remove('hidden');
@@ -359,11 +445,12 @@
                 method: "POST",
                 body: JSON.stringify({ 
                     action: "getPaper", 
-                    studentId: currentStudentId, 
+                    token: authToken,
                     paperId: currentPaperId 
                 })
             });
             const data = await response.json();
+            if (handleAuth(data)) return;
 
             if (data.status === "success") {
                 let prevAttempts = (data.currentAttempt !== undefined) ? data.currentAttempt : 0;
@@ -412,6 +499,7 @@
                     });
 
                     qContainer.appendChild(qFragment);
+                    buildWatermark();
 
                     document.getElementById('dashboard-sec').classList.add('hidden');
                     document.getElementById('result-sec').classList.add('hidden');
@@ -489,12 +577,13 @@
                 method: "POST",
                 body: JSON.stringify({
                     action: "submitPaper",
-                    studentId: currentStudentId,
+                    token: authToken,
                     paperId: currentPaperId,
                     answers: answers
                 })
             });
             const data = await response.json();
+            if (handleAuth(data)) return;
 
             if (data.status === "success") {
                 document.getElementById('exam-sec').classList.add('hidden');
