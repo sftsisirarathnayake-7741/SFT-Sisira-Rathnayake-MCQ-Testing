@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SFT MCQ Portal</title>
-    <!-- version: secure-1 -->
+    <!-- version: secure-2 -->
     <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -136,14 +136,6 @@
             pointer-events: none;
             overflow: hidden;
             z-index: 5;
-        }
-        #exam-watermark span {
-            position: absolute;
-            transform: rotate(-30deg);
-            font-size: 22px;
-            font-weight: bold;
-            color: rgba(13, 110, 253, 0.07);
-            white-space: nowrap;
         }
         /* Print කිරීම අවහිර කිරීම */
         @media print {
@@ -350,22 +342,18 @@
         return false;
     }
 
-    // ප්‍රශ්න පත්‍රය පුරා ශිෂ්‍යයාගේ ID එක සහිත watermark එක
+    // ප්‍රශ්න පත්‍රය පුරා (මුල සිට අගටම) ශිෂ්‍යයාගේ ID එක සහිත watermark එක
+    // රූපයක් ලෙස නැවත නැවත පිරෙන නිසා paper එක කොතරම් දිග වුණත් අගටම පෙනේ
     function buildWatermark() {
         const wm = document.getElementById('exam-watermark');
+        const text = ("SFT · " + currentStudentId).replace(/[<>&"']/g, "");
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">' +
+                    '<text x="160" y="110" text-anchor="middle" transform="rotate(-30 160 100)" ' +
+                    'font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="rgba(13,110,253,0.08)">' +
+                    text + '</text></svg>';
         wm.innerHTML = "";
-        const exam = document.getElementById('exam-sec');
-        const h = Math.max(exam.scrollHeight, 1200);
-        const text = "SFT · " + currentStudentId;
-        for (let y = 40; y < h; y += 170) {
-            for (let x = -60; x < 700; x += 260) {
-                const sp = document.createElement('span');
-                sp.textContent = text;
-                sp.style.left = (x + ((y / 170) % 2) * 120) + "px";
-                sp.style.top = y + "px";
-                wm.appendChild(sp);
-            }
-        }
+        wm.style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '")';
+        wm.style.backgroundRepeat = 'repeat';
     }
 
     // Copy, right-click, save, print, view-source යතුරු අවහිර කිරීම (ප්‍රශ්න පත්‍රය විවෘත විට)
