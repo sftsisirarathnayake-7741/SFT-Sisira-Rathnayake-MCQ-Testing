@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SFT MCQ Portal</title>
-    <!-- version: shuffle-1, one-device-1, teacher-check-1, timer-audio-3 -->
+    <!-- version: shuffle-1, one-device-1, teacher-check-1, timer-audio-4 -->
     <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -215,7 +215,7 @@
         </div>
         <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
         <p id="login-error" class="error-msg"></p>
-        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: timer-audio-3</p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: timer-audio-4</p>
     </div>
 
     <!-- Dashboard / Paper Selection Section -->
@@ -564,29 +564,59 @@
     let clipSpeed = 1;
     try { clipSpeed = parseFloat(localStorage.getItem('sft_clip_speed')) || 1; } catch (e) {}
 
-    function playClip(targetId, fileId) {
+    const clipCache = {};
+    let playReq = 0;
+
+    function speedRowHTML() {
+        return '<div class="speed-row">වේගය: ' + [0.75, 1, 1.25, 1.5].map(function(s) {
+            return '<button type="button" data-s="' + s + '" class="' + (s === clipSpeed ? 'on' : '') + '">' + s + 'x</button>';
+        }).join('') + '</div>';
+    }
+
+    async function playClip(targetId, fileId) {
         const p = document.getElementById(targetId + '-player');
         if (!p) return;
-        const src = 'https://drive.google.com/uc?export=download&id=' + fileId;
-        const speeds = [0.75, 1, 1.25, 1.5];
-        p.innerHTML = '<audio controls autoplay preload="auto" src="' + src + '"></audio>' +
-            '<div class="speed-row">වේගය: ' + speeds.map(function(s) {
-                return '<button type="button" data-s="' + s + '" class="' + (s === clipSpeed ? 'on' : '') + '">' + s + 'x</button>';
-            }).join('') + '</div>';
-        const au = p.querySelector('audio');
-        au.playbackRate = clipSpeed;
-        au.addEventListener('loadedmetadata', function() { au.playbackRate = clipSpeed; });
-        au.addEventListener('error', function() {
-            p.innerHTML = '<iframe src="https://drive.google.com/file/d/' + fileId + '/preview" allow="autoplay"></iframe>';
-        });
-        p.querySelectorAll('.speed-row button').forEach(function(b) {
-            b.onclick = function() {
-                clipSpeed = parseFloat(b.getAttribute('data-s'));
-                try { localStorage.setItem('sft_clip_speed', String(clipSpeed)); } catch (e) {}
-                au.playbackRate = clipSpeed;
-                p.querySelectorAll('.speed-row button').forEach(function(x) { x.classList.toggle('on', x === b); });
-            };
-        });
+        document.querySelectorAll('.audio-player audio').forEach(function(a) { try { a.pause(); } catch (e) {} });
+        const reqNo = ++playReq;
+        const paperId = (targetId === 'audio-result') ? currentPaperId : document.getElementById('paperSelect').value;
+        p.innerHTML = '<p style="margin:6px 0; color:#0b5ed7; font-size:14px;">⏳ Audio එක load වෙමින් පවතී...</p>';
+        try {
+            let url = clipCache[fileId];
+            if (!url) {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "getClip", token: authToken, paperId: paperId, fileId: fileId })
+                });
+                const data = await response.json();
+                if (handleAuth(data)) return;
+                if (data.status !== "success") throw new Error(data.message || "error");
+                const bin = atob(data.data);
+                const bytes = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                url = URL.createObjectURL(new Blob([bytes], { type: data.mime || 'audio/mpeg' }));
+                clipCache[fileId] = url;
+            }
+            if (reqNo !== playReq) return; // මේ අතරතුර වෙනත් clip එකක් තෝරා ඇත
+            p.innerHTML = '<audio controls preload="auto" src="' + url + '"></audio>' + speedRowHTML();
+            const au = p.querySelector('audio');
+            au.playbackRate = clipSpeed;
+            au.addEventListener('loadedmetadata', function() { au.playbackRate = clipSpeed; });
+            au.addEventListener('play', function() { au.playbackRate = clipSpeed; });
+            p.querySelectorAll('.speed-row button').forEach(function(b) {
+                b.onclick = function() {
+                    clipSpeed = parseFloat(b.getAttribute('data-s'));
+                    try { localStorage.setItem('sft_clip_speed', String(clipSpeed)); } catch (e) {}
+                    au.playbackRate = clipSpeed;
+                    p.querySelectorAll('.speed-row button').forEach(function(x) { x.classList.toggle('on', x === b); });
+                };
+            });
+            au.play().catch(function() {});
+        } catch (err) {
+            console.error(err);
+            if (reqNo !== playReq) return;
+            // අසාර්ථක වුවහොත් Drive player එක
+            p.innerHTML = '<iframe src="https://drive.google.com/file/d/' + fileId + '/preview" allow="autoplay" style="height:90px;"></iframe>';
+        }
     }
 
     function stopAudio() {
