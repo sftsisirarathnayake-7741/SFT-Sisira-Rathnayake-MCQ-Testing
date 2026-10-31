@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SFT MCQ Portal</title>
-    <!-- version: shuffle-1, one-device-1, teacher-check-1, timer-audio-1 -->
+    <!-- version: shuffle-1, one-device-1, teacher-check-1, timer-audio-3 -->
     <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -162,6 +162,10 @@
         }
         .audio-player { margin-top: 10px; }
         .audio-player iframe { width: 100%; height: 70px; border: 0; border-radius: 6px; background: #fff; }
+        .audio-player audio { width: 100%; }
+        .speed-row { display: flex; gap: 6px; align-items: center; margin-top: 6px; font-size: 13px; flex-wrap: wrap; }
+        .speed-row button { width: auto; margin: 0; padding: 4px 10px; font-size: 13px; background: #6c757d; }
+        .speed-row button.on { background: #0d6efd; }
         /* Timer */
         #timer-bar {
             position: sticky; top: 0; z-index: 20;
@@ -211,6 +215,7 @@
         </div>
         <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
         <p id="login-error" class="error-msg"></p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: timer-audio-3</p>
     </div>
 
     <!-- Dashboard / Paper Selection Section -->
@@ -554,13 +559,38 @@
         }
     }
 
+    // Drive ගොනුව browser එකේම audio player එකෙන් වාදනය කිරීම (ඉක්මනින් load වේ, වේගය වෙනස් කළ හැක)
+    // එය අසාර්ථක වුවහොත් Drive player එක භාවිත කරයි
+    let clipSpeed = 1;
+    try { clipSpeed = parseFloat(localStorage.getItem('sft_clip_speed')) || 1; } catch (e) {}
+
     function playClip(targetId, fileId) {
         const p = document.getElementById(targetId + '-player');
         if (!p) return;
-        p.innerHTML = '<iframe src="https://drive.google.com/file/d/' + fileId + '/preview" allow="autoplay"></iframe>';
+        const src = 'https://drive.google.com/uc?export=download&id=' + fileId;
+        const speeds = [0.75, 1, 1.25, 1.5];
+        p.innerHTML = '<audio controls autoplay preload="auto" src="' + src + '"></audio>' +
+            '<div class="speed-row">වේගය: ' + speeds.map(function(s) {
+                return '<button type="button" data-s="' + s + '" class="' + (s === clipSpeed ? 'on' : '') + '">' + s + 'x</button>';
+            }).join('') + '</div>';
+        const au = p.querySelector('audio');
+        au.playbackRate = clipSpeed;
+        au.addEventListener('loadedmetadata', function() { au.playbackRate = clipSpeed; });
+        au.addEventListener('error', function() {
+            p.innerHTML = '<iframe src="https://drive.google.com/file/d/' + fileId + '/preview" allow="autoplay"></iframe>';
+        });
+        p.querySelectorAll('.speed-row button').forEach(function(b) {
+            b.onclick = function() {
+                clipSpeed = parseFloat(b.getAttribute('data-s'));
+                try { localStorage.setItem('sft_clip_speed', String(clipSpeed)); } catch (e) {}
+                au.playbackRate = clipSpeed;
+                p.querySelectorAll('.speed-row button').forEach(function(x) { x.classList.toggle('on', x === b); });
+            };
+        });
     }
 
     function stopAudio() {
+        document.querySelectorAll('.audio-player audio').forEach(function(a) { try { a.pause(); } catch (e) {} });
         ['audio-dash', 'audio-result'].forEach(function(id) {
             const b = document.getElementById(id);
             b.innerHTML = ""; b.classList.add('hidden');
