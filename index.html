@@ -70,6 +70,23 @@
             font-weight: bold;
             color: #333;
         }
+        /* ප්‍රශ්න අංකය වමෙන්, ප්‍රශ්නයේ සියලු පේළි ටිකක් දකුණට (hanging indent) */
+        .question p.q-text {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            line-height: 1.6;
+        }
+        .q-text .q-no {
+            min-width: 34px;
+            flex-shrink: 0;
+        }
+        .q-text .q-body {
+            flex: 1;
+        }
+        .question .options {
+            margin-left: 40px;
+        }
         .options {
             display: flex;
             flex-wrap: wrap;
@@ -215,7 +232,7 @@
         </div>
         <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
         <p id="login-error" class="error-msg"></p>
-        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: timer-audio-6</p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: timer-audio-7</p>
     </div>
 
     <!-- Dashboard / Paper Selection Section -->
@@ -824,7 +841,7 @@
                         qDiv.setAttribute('data-qid', q.no);
                         
                         qDiv.innerHTML = `
-                            <p>${q.no}. ${q.q}</p>
+                            <p class="q-text"><span class="q-no">${q.no}.</span><span class="q-body">${String(q.q).replace(/\n/g, '<br>')}</span></p>
                             ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;" loading="lazy"></div>` : ''}
                             <div class="options">
                                 ${optionsHTML(q)}
