@@ -841,7 +841,7 @@
                         qDiv.setAttribute('data-qid', q.no);
                         
                         qDiv.innerHTML = `
-                            <p class="q-text"><span class="q-no">${q.no}.</span><span class="q-body">${String(q.q).replace(/\n/g, '<br>')}</span></p>
+                          <span class="q-body">${String(q.q).replace(/>\s*\n\s*</g, '><').replace(/\n/g, '<br>')}</span>
                             ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;" loading="lazy"></div>` : ''}
                             <div class="options">
                                 ${optionsHTML(q)}
