@@ -71,7 +71,10 @@
             color: #333;
         }
         /* ප්‍රශ්න අංකය වමෙන්, ප්‍රශ්නයේ සියලු පේළි ටිකක් දකුණට (hanging indent) */
-        .question p.q-text {
+        .question .q-text {
+            font-weight: bold;
+            color: #333;
+            margin: 1em 0;
             display: flex;
             align-items: flex-start;
             gap: 6px;
@@ -83,6 +86,12 @@
         }
         .q-text .q-body {
             flex: 1;
+            min-width: 0;
+        }
+        .q-body table {
+            margin: 8px 0;
+            font-weight: normal;
+            max-width: 100%;
         }
         .question .options {
             margin-left: 40px;
@@ -841,7 +850,7 @@
                         qDiv.setAttribute('data-qid', q.no);
                         
                         qDiv.innerHTML = `
-                          <span class="q-body">${String(q.q).replace(/>\s*\n\s*</g, '><').replace(/\n/g, '<br>')}</span>
+                            <div class="q-text"><span class="q-no">${q.no}.</span><div class="q-body">${String(q.q).replace(/>\s*\n\s*</g, '><').replace(/\n/g, '<br>')}</div></div>
                             ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;" loading="lazy"></div>` : ''}
                             <div class="options">
                                 ${optionsHTML(q)}
