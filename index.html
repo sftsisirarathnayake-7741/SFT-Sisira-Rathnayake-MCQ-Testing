@@ -112,6 +112,15 @@
             border-radius: 4px;
             border: 1px solid #e9ecef;
         }
+        /* පිළිතුරු සමාන පළලින් යුත් සිරස් තීරුවලට (පේළි 1 / 2 / 3 / 5) */
+        .options.opt-grid {
+            display: grid;
+            gap: 10px 15px;
+        }
+        .options.opt-grid label {
+            display: flex;
+            min-width: 0;
+        }
         .options input[type="radio"] {
             width: auto;
             margin-right: 6px;
@@ -452,6 +461,34 @@
         }
         return Math.floor(Math.random() * max);
     }
+
+    // පිළිතුරු 5 ඉඩ ඇති පරිදි තීරු 5 / 3 / 2 / 1 කට සමාන පළලින් පෙළගැස්වීම
+    function layoutOptions() {
+        const boxes = document.querySelectorAll('#exam-sec .options');
+        boxes.forEach(function(box) {
+            box.classList.remove('opt-grid');
+            box.style.gridTemplateColumns = '';
+        });
+        boxes.forEach(function(box) {
+            const labels = box.querySelectorAll('label');
+            if (!labels.length) return;
+            const W = box.clientWidth;
+            let m = 0;
+            labels.forEach(function(l) { m = Math.max(m, l.getBoundingClientRect().width); });
+            const gap = 15;
+            let cols = 1;
+            for (const c of [5, 3, 2]) {
+                if (c * m + (c - 1) * gap <= W) { cols = c; break; }
+            }
+            box.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
+            box.classList.add('opt-grid');
+        });
+    }
+    let layoutTimer = null;
+    window.addEventListener('resize', function() {
+        clearTimeout(layoutTimer);
+        layoutTimer = setTimeout(layoutOptions, 150);
+    });
 
     // එක් ප්‍රශ්නයක පිළිතුරු 5 (හැම attempt එකකදීම අලුතින්) මිශ්‍ර කර HTML සෑදීම
     function optionsHTML(q) {
@@ -860,6 +897,9 @@
                     });
 
                     qContainer.appendChild(qFragment);
+                    requestAnimationFrame(layoutOptions);
+                    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutOptions);
+                    qContainer.querySelectorAll('img').forEach(function(im) { if (!im.complete) im.addEventListener('load', layoutOptions); });
                     buildWatermark();
                     stopAudio();
 
