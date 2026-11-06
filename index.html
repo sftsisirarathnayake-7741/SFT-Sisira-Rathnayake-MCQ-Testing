@@ -117,6 +117,11 @@
             display: grid;
             gap: 10px 15px;
         }
+        /* පිළිතුරේ සම්පූර්ණ පෙළ එක කොටසක් ලෙස – <i>English</i> සහ සිංහල වචන අතර හිස්තැන නැති නොවීමට */
+        .options .opt-t {
+            display: block;
+            min-width: 0;
+        }
         .options.opt-grid label {
             display: flex;
             min-width: 0;
@@ -439,7 +444,7 @@
             const src = directImageLink(v);
             return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${shown})</span><img class="opt-img" src="${src}" data-src="${v.trim()}" alt="පිළිතුර ${shown}" referrerpolicy="no-referrer" onerror="imgFailed(this)"></label>`;
         }
-        return `<label><input type="radio" name="q_${qNo}" value="${n}"> ${shown}) ${v}</label>`;
+        return `<label><input type="radio" name="q_${qNo}" value="${n}"><span class="opt-t">${shown}) ${v}</span></label>`;
     }
 
     // පිළිතුරු මිශ්‍ර නොකළ යුතු ප්‍රශ්න: "A පමණි / A සහ B..." වැනි ප්‍රකාශ තේරීම් හෝ "ප්‍රස්තාරය 1" වැනි අංක සඳහන් පිළිතුරු
