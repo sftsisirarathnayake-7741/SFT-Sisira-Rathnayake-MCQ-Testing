@@ -282,12 +282,12 @@
         </div>
         <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
         <p id="login-error" class="error-msg"></p>
-        <div class="promo-hint">
+        <div class="promo-hint hidden" id="promo-hint">
             <div>🎁 <b>නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය</b> කිරීමට:</div>
             <div class="cred">User ID: <span>Student</span> &nbsp; Password: <span>123</span></div>
             <button type="button" class="promo-btn" onclick="promoQuickLogin()">නොමිලේ ප්‍රශ්න පත්‍රය කරන්න</button>
         </div>
-        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: promo-2</p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: promo-4</p>
     </div>
 
     <!-- ප්‍රවර්ධන පත්‍රය: WhatsApp අංකය හා ධාරාව -->
@@ -304,7 +304,7 @@
         </div>
         <button id="promoStartBtn" onclick="promoStart()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
         <p id="promo-error" class="error-msg"></p>
-        <button type="button" onclick="location.reload()" style="background:#6c757d; margin-top:10px;">ආපසු</button>
+        <button type="button" id="promoBackBtn" onclick="location.reload()" style="background:#6c757d; margin-top:10px;">ආපසු</button>
     </div>
 
     <!-- Dashboard / Paper Selection Section -->
@@ -966,6 +966,16 @@
 
 
     // ================== නොමිලේ ප්‍රවර්ධන (Promo) ප්‍රශ්න පත්‍රය ==================
+    // වෙනම ප්‍රවර්ධන link එක: …/?promo  → සාමාන්‍ය Login පිටුව නොපෙන්වා කෙලින්ම WhatsApp අංකය ඉල්ලයි
+    const PROMO_LINK = /[?&#]promo\b/i.test(location.search + location.hash);
+    if (PROMO_LINK) {
+        document.addEventListener('DOMContentLoaded', function() {
+            showPromoForm([]);
+            document.getElementById('promoBackBtn').classList.add('hidden');
+            document.title = "SFT – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
+        });
+    }
+
     function promoQuickLogin() {
         document.getElementById('studentId').value = "Student";
         document.getElementById('password').value = "123";
@@ -974,7 +984,7 @@
 
     function showPromoForm(streams) {
         const box = document.getElementById('stream-choice');
-        if (!streams.length) streams = [{ key: 'tech', label: 'Technology' }, { key: 'bio', label: 'Bio' }, { key: 'maths', label: 'Maths' }];
+        if (!streams.length) streams = [{ key: 'tech', label: 'Technology (තාක්ෂණවේදය)' }, { key: 'bio', label: 'Bio (ජීව විද්‍යාව)' }, { key: 'maths', label: 'Maths (ගණිතය)' }];
         box.innerHTML = streams.map(function(s) {
             return '<label><input type="radio" name="promoStream" value="' + esc(s.key) + '"> ' + esc(s.label) + '</label>';
         }).join('');
