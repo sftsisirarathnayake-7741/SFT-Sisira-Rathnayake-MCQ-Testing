@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SFT Promo | SFT MCQ Portal</title>
+    <!-- version: shuffle-1, one-device-1, teacher-check-1, space-fix-2, q-indent-1, greek-font-1 -->
+    <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Serif Sinhala', 'Noto Serif', 'Iskoola Pota', serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            text-rendering: optimizeLegibility;
+        }
+        .container {
+            max-width: 700px;
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #0d6efd;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #0b5ed7;
+        }
+        button:disabled {
+            background-color: #b0c4de;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .question p {
+            font-weight: bold;
+            color: #333;
+        }
+        /* ප්‍රශ්න අංකය වමෙන්, ප්‍රශ්නයේ සියලු පේළි ටිකක් දකුණට (hanging indent) */
+        .question .q-text {
+            font-weight: bold;
+            color: #333;
+            margin: 1em 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            line-height: 1.6;
+        }
+        .q-text .q-no {
+            min-width: 34px;
+            flex-shrink: 0;
+        }
+        .q-text .q-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .q-body table {
+            margin: 8px 0;
+            font-weight: normal;
+            max-width: 100%;
+        }
+        .question .options {
+            margin-left: 40px;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 8px;
+        }
+        .options label {
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            padding: 5px 12px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        /* පිළිතුරු සමාන පළලින් යුත් සිරස් තීරුවලට (පේළි 1 / 2 / 3 / 5) */
+        .options.opt-grid {
+            display: grid;
+            gap: 10px 15px;
+        }
+        /* පිළිතුරේ සම්පූර්ණ පෙළ එක කොටසක් ලෙස – <i>English</i> සහ සිංහල වචන අතර හිස්තැන නැති නොවීමට */
+        .options .opt-t {
+            display: block;
+            min-width: 0;
+        }
+        .options.opt-grid label {
+            display: flex;
+            min-width: 0;
+        }
+        .options input[type="radio"] {
+            width: auto;
+            margin-right: 6px;
+            cursor: pointer;
+        }
+        #result-sec {
+            text-align: center;
+        }
+        .error-msg {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        /* පිළිතුර රූපයක් (ප්‍රස්තාරයක්) වන විට */
+        .options label.img-opt {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .opt-img {
+            display: block;
+            max-width: 220px;
+            max-height: 180px;
+            width: auto;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+        }
+        /* ප්‍රශ්න පත්‍රය copy කිරීම, select කිරීම අපහසු කිරීම */
+        #exam-sec, #result-sec {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            position: relative;
+        }
+        #exam-sec img {
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+        #exam-sec label img { pointer-events: none; }
+        /* ශිෂ්‍යයාගේ ID එක සහිත watermark එක */
+        #exam-watermark {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+        /* Print කිරීම අවහිර කිරීම */
+        @media print {
+            body * { display: none !important; }
+            body::after { content: "SFT MCQ Portal - මුද්‍රණය කිරීමට අවසර නැත"; display: block; font-size: 20px; padding: 40px; }
+        }
+        /* Audio list */
+        .audio-box {
+            background: #eef6ff;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .audio-box h4 { margin: 0 0 8px 0; color: #0b5ed7; font-size: 16px; }
+        .audio-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 6px 4px; border-bottom: 1px dashed #cfe2ff; font-size: 15px;
+        }
+        .audio-item:last-child { border-bottom: none; }
+        .audio-item button {
+            width: auto; margin: 0; padding: 6px 12px; font-size: 14px; flex-shrink: 0;
+        }
+        .audio-player { margin-top: 10px; }
+        .audio-player iframe { width: 100%; height: 70px; border: 0; border-radius: 6px; background: #fff; }
+        .audio-player audio { width: 100%; }
+        .speed-row { display: flex; gap: 6px; align-items: center; margin-top: 6px; font-size: 13px; flex-wrap: wrap; }
+        .speed-row button { width: auto; margin: 0; padding: 4px 10px; font-size: 13px; background: #6c757d; }
+        .speed-row button.on { background: #0d6efd; }
+        /* Timer */
+        #timer-bar {
+            position: sticky; top: 0; z-index: 20;
+            background: #0d6efd; color: #fff; text-align: center;
+            font-size: 20px; font-weight: bold; padding: 10px;
+            border-radius: 6px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        #timer-bar.low { background: #dc3545; }
+        #teacher-panel {
+            background: #fffbea;
+            border: 1px solid #f0d77a;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        #teacher-panel h3 { margin: 0 0 10px 0; color: #8a6d00; font-size: 17px; }
+        #tc-result ul { list-style: none; padding: 0; margin: 10px 0; }
+        #tc-result li { padding: 6px 8px; border-radius: 4px; margin-bottom: 5px; font-size: 14px; }
+        #tc-result li.ok { background: #eaf7ee; color: #155724; }
+        #tc-result li.bad { background: #fdecea; color: #721c24; }
+        .tc-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tc-btns button { flex: 1; min-width: 180px; }
+        /* ---------- ප්‍රවර්ධන (Promo) ---------- */
+        .promo-hint {
+            margin-top: 18px; padding: 14px; border-radius: 8px; text-align: center;
+            background: linear-gradient(135deg, #fff8e1, #ffecb3); border: 1px solid #ffd54f;
+        }
+        .promo-hint b { color: #e65100; }
+        .promo-hint .cred { font-size: 15px; margin: 6px 0 10px; }
+        .promo-hint .cred span { background: #fff; border: 1px solid #ffcc80; border-radius: 4px; padding: 2px 8px; font-weight: bold; }
+        .promo-btn { background: #ff9800 !important; }
+        .stream-choice { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0 4px; }
+        .stream-choice label {
+            flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+            border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; font-weight: bold; background: #fff;
+        }
+        .stream-choice input { width: auto; margin: 0; }
+        .stream-choice label:has(input:checked) { border-color: #0d6efd; background: #eef4ff; }
+        .promo-result { margin: 15px 0; text-align: center; }
+        .wa-btn {
+            display: block; background: #25d366; color: #fff !important; text-decoration: none; font-weight: bold;
+            font-size: 18px; padding: 14px; border-radius: 8px; margin: 12px 0;
+        }
+        .exp-list { text-align: left; margin-top: 12px; }
+        .exp-item { border: 1px solid #e3e8ef; border-left: 4px solid #198754; border-radius: 6px; padding: 10px 12px; margin: 10px 0; background: #fbfdfb; }
+        .exp-item .exp-h { font-weight: bold; color: #0f5132; margin-bottom: 4px; }
+        .teacher-promo { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #ccc; }
+        .teacher-promo .tp-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+        .teacher-promo .tp-btns button { flex: 1; min-width: 160px; margin-top: 6px; background: #ff9800; }
+        .wrong-box {
+            background: #fff3f3;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Login Section -->
+    <div id="login-sec">
+        <h2>SFT MCQ Portal - පිවිසෙන්න</h2>
+        <div class="form-group">
+            <label style="font-weight: bold; color: #333;">Student ID:</label>
+            <input type="text" id="studentId" placeholder="ඔබේ User ID එක ඇතුළත් කරන්න">
+        </div>
+        <div class="form-group">
+            <label style="font-weight: bold; color: #333;">Password:</label>
+            <input type="password" id="password" placeholder="මුරපදය ඇතුළත් කරන්න">
+        </div>
+        <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
+        <p id="login-error" class="error-msg"></p>
+        <div class="promo-hint hidden" id="promo-hint">
+            <div>🎁 <b>නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය</b> කිරීමට:</div>
+            <div class="cred">User ID: <span>Student</span> &nbsp; Password: <span>123</span></div>
+            <button type="button" class="promo-btn" onclick="promoQuickLogin()">නොමිලේ ප්‍රශ්න පත්‍රය කරන්න</button>
+        </div>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: promo-5</p>
+    </div>
+
+    <!-- ප්‍රවර්ධන පත්‍රය: WhatsApp අංකය හා ධාරාව -->
+    <div id="promo-sec" class="hidden">
+        <h2>🎁 නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය</h2>
+        <p style="text-align:center; color:#555;">ප්‍රශ්න 25 • එක් WhatsApp අංකයකට එක් වරක් පමණි</p>
+        <div class="form-group">
+            <label style="font-weight: bold; color: #333;">ඔබේ WhatsApp අංකය:</label>
+            <input type="tel" id="promoNumber" inputmode="numeric" maxlength="15" placeholder="උදා: 0771234567">
+        </div>
+        <div class="form-group">
+            <label style="font-weight: bold; color: #333;">ඔබේ විෂය ධාරාව:</label>
+            <div class="stream-choice" id="stream-choice"></div>
+        </div>
+        <button id="promoStartBtn" onclick="promoStart()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
+        <p id="promo-error" class="error-msg"></p>
+        <button type="button" id="promoBackBtn" onclick="location.reload()" style="background:#6c757d; margin-top:10px;">ආපසු</button>
+    </div>
+
+    <!-- Dashboard / Paper Selection Section -->
+    <div id="dashboard-sec" class="hidden">
+        <h2 id="welcome-msg">සාදරයෙන් පිළිගනිමු!</h2>
+
+        <!-- ගුරු ගිණුමට පමණක් පෙනෙන කොටස: ශිෂ්‍ය ගිණුමක් පරීක්ෂා කිරීම -->
+        <div id="teacher-panel" class="hidden">
+            <h3>👨‍🏫 ශිෂ්‍ය ගිණුම පරීක්ෂා කරන්න</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="tcId" placeholder="ශිෂ්‍යයාගේ User ID" style="flex: 1; min-width: 150px;">
+                <input type="text" id="tcPwd" placeholder="ශිෂ්‍යයා ගසන Password (අවශ්‍ය නම්)" style="flex: 1; min-width: 150px;">
+            </div>
+            <button id="tcCheckBtn" onclick="teacherCheck()">පරීක්ෂා කරන්න</button>
+            <div id="tc-result"></div>
+            <div class="teacher-promo">
+                <h3 style="margin:0 0 6px;">🎁 ප්‍රවර්ධන පත්‍රය (සිසුන්ට පෙනෙන ආකාරයටම)</h3>
+                <div class="tp-btns">
+                    <button onclick="teacherPromo('SFT')">SFT පත්‍රය බලන්න</button>
+                    <button onclick="teacherPromo('PHY')">PHY පත්‍රය බලන්න</button>
+                </div>
+                <p id="tp-error" class="error-msg"></p>
+            </div>
+        </div>
+        
+        <!-- Paper Range Filter Section (වෙනස 4ක් වන පරිදි සකස් කළ කොටස) -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #e9ecef;">
+            <label style="color: #0d6efd; margin-bottom: 10px; font-weight: bold;">🔍 ප්‍රශ්න පත්‍ර පරාසය (Range) තෝරන්න (උදා: 1-5, 6-10):</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="flex: 1;">
+                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">සිට (From):</label>
+                    <input type="number" id="rangeStart" value="1" min="1" max="1000">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">දක්වා (To):</label>
+                    <input type="number" id="rangeEnd" value="5" min="1" max="1000">
+                </div>
+                <div style="flex: 1; align-self: flex-end;">
+                    <button type="button" onclick="generatePaperList()" style="margin-top: 0; padding: 12px;">ලැයිස්තුව පෙන්වන්න</button>
+                </div>
+            </div>
+            <p id="range-error" style="color: #dc3545; font-size: 13px; margin: 8px 0 0 0; font-weight: bold;"></p>
+        </div>
+
+        <div class="form-group">
+            <label style="font-weight: bold; color: #333;">ප්‍රශ්න පත්‍රය තෝරන්න:</label>
+            <select id="paperSelect" onchange="loadAudio('audio-dash')">
+                <!-- ඩ්‍රොප්ඩවුන් මෙනුවට අදාළ පරාසය අනුව ප්‍රශ්න පත්‍ර 5ක් පමණක් පූරණය වේ -->
+            </select>
+        </div>
+        <div id="audio-dash" class="audio-box hidden"></div>
+        <button id="loadPaperBtn" onclick="loadPaper()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
+        <p id="dashboard-error" class="error-msg"></p>
+    </div>
+
+    <!-- Exam Section -->
+    <div id="exam-sec" class="hidden">
+       <div id="exam-watermark" aria-hidden="true"></div>
+       <div id="timer-bar" class="hidden"></div>
+       <img id="paper-banner" class="hidden" alt="ප්‍රශ්න පත්‍රය" style="width: 100%; height: auto; vertical-align: top; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+       <h2 id="paper-title" style="text-align: center;">ප්‍රශ්න පත්‍රය</h2>
+       <p style="text-align: center; font-size: 1.1rem; font-weight: bold; color: #555; margin-bottom: 20px;">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake)</p>
+       <p id="attempt-info" style="text-align: center; color: #0d6efd; font-weight: bold;"></p>
+        <div id="questions-container"></div>
+        <button id="submitBtn" onclick="submitPaper()">උත්තර යොමු කරන්න (Submit)</button>
+    </div>
+
+    <!-- Result Section -->
+    <div id="result-sec" class="hidden">
+        <h2>ප්‍රතිඵලය</h2>
+        <p id="score-display" style="font-size: 20px; font-weight: bold;"></p>
+        <p id="attempt-display"></p>
+        
+        <!-- වැරදුණු ප්‍රශ්න පෙන්වන පෙට්ටිය -->
+        <div id="wrong-questions-container" class="hidden">
+            <div class="wrong-box">
+                <strong>⚠️ ඔබට වැරදුණු ප්‍රශ්න අංක:</strong>
+                <p id="wrong-q-list" style="margin-top: 5px; font-weight: bold;"></p>
+                <p style="font-size: 14px; margin-bottom: 0;">මෙම සිද්ධාන්ත නැවත කියවා බලා, ඊළඟ වාරයේදී එම ප්‍රශ්න නිවැරදි කරගන්න!</p>
+            </div>
+        </div>
+
+        <div id="promo-result" class="promo-result hidden"></div>
+
+        <div id="audio-result" class="audio-box hidden"></div>
+
+        <button id="retry-btn" onclick="loadPaper()" class="hidden" style="background-color: #ffc107; color: #000;">නැවත උත්සාහ කරන්න (Try Again)</button>
+        <button onclick="location.reload()" style="margin-top: 10px;">මුල් පිටුවට යන්න</button>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0kR0L9Yv_smxuDa06LL8l4Ac7dfH4NDOa_NAzXQZCkQ1r_3w1koR8o6CeDed9J8SGXg/exec"; 
+
+    let currentStudentId = "";
+    let authToken = ""; // Login වූ විට Server එකෙන් ලැබෙන රහස් token එක (page එක refresh කළ විට මැකේ)
+    let currentPaperId = "";
+    let currentAttempt = 1;
+    let promoMode = null;   // ප්‍රවර්ධන පත්‍රය: { teacher: true/false, paper: 'SFT'/'PHY' }
+    let promoPass = "";
+    let promoNum = "";
+    let maxAttempts = 3;
+
+    // මෙම උපාංගයට (browser එකට) අනන්‍ය හැඳුනුම් අංකයක් - එක් ගිණුමකට එක් උපාංගයක් පමණක් ඉඩ දීමට
+    function getDeviceId() {
+        let d = "";
+        try { d = localStorage.getItem('sft_device_id') || ""; } catch (e) {}
+        if (!d) {
+            d = "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+            try { localStorage.setItem('sft_device_id', d); } catch (e) {}
+        }
+        return d;
+    }
+
+    window.onload = function() {
+        // මුල් අවස්ථාවේ 1 සිට 5 දක්වා පරාසය ස්වයංක්‍රීයව ලෝඩ් කිරීම
+        generatePaperList();
+
+        const savedId = localStorage.getItem('sft_student_id');
+        if (savedId) {
+            document.getElementById('studentId').value = savedId;
+        }
+    };
+
+    // From සහ To අතර වෙනස හරියටම 4ක් (ප්‍රශ්න පත්‍ර 5ක්) වන පරිදි පරීක්ෂා කර ලැයිස්තුව සකස් කිරීම
+    function generatePaperList() {
+        const startInput = document.getElementById('rangeStart');
+        const endInput = document.getElementById('rangeEnd');
+        const rangeError = document.getElementById('range-error');
+        const selectTag = document.getElementById('paperSelect');
+        
+        let start = parseInt(startInput.value);
+        let end = parseInt(endInput.value);
+        rangeError.innerText = "";
+
+        if (isNaN(start) || isNaN(end)) {
+            rangeError.innerText = "කරුණාකර වලංගු අංක ඇතුළත් කරන්න!";
+            return;
+        }
+
+        // To සහ From අතර වෙනස 4ක් විය යුතුය (උදා: 5 - 1 = 4)
+        if ((end - start) !== 4) {
+            rangeError.innerText = "⚠️ 'From' සහ 'To' අතර වෙනස හරියටම 4ක් විය යුතුය (උදා: 1 සිට 5 දක්වා, 6 සිට 10 දක්වා).";
+            return;
+        }
+
+        if (start < 1 || end > 1000) {
+            rangeError.innerText = "පරාසය 1 සහ 1000 අතර තිබිය යුතුය!";
+            return;
+        }
+
+        selectTag.innerHTML = ""; // කලින් තිබූ ලැයිස්තුව ඉවත් කිරීම
+        const fragment = document.createDocumentFragment();
+
+        for (let i = start; i <= end; i++) {
+            let opt = document.createElement('option');
+            let formattedIdNum = "PAPER_" + (i < 10 ? "0" + i : i);
+            opt.value = formattedIdNum;
+
+            let formattedNum = i < 10 ? "0" + i : i;
+            opt.innerText = "ප්‍රශ්න පත්‍රය " + formattedNum;
+            fragment.appendChild(opt);
+        }
+        selectTag.appendChild(fragment);
+        if (authToken) loadAudio('audio-dash');
+    }
+
+    // පිළිතුරක් link එකක් (http/https) නම් එය රූපයක් ලෙස පෙන්වීම (නැත්නම් කලින් වගේම අකුරු ලෙස)
+    function isImageLink(v) {
+        if (typeof v !== 'string') return false;
+        const s = v.trim();
+        return /^https?:\/\/\S+$/i.test(s);
+    }
+
+    // Google Drive share link එකක් කෙලින්ම පෙන්විය හැකි රූප link එකක් බවට හැරවීම
+    function directImageLink(v) {
+        const s = v.trim();
+        const m = s.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/) ||
+                  s.match(/drive\.google\.com\/(?:open|uc|thumbnail)\?(?:.*&)?id=([^&#]+)/) ||
+                  s.match(/docs\.google\.com\/uc\?(?:.*&)?id=([^&#]+)/);
+        return m ? "https://lh3.googleusercontent.com/d/" + m[1] : s;
+    }
+
+    // රූපය load නොවුණොත් link එක click කළ හැකි ලෙස පෙන්වීම
+    function imgFailed(img) {
+        const a = document.createElement('a');
+        a.href = img.getAttribute('data-src');
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerText = 'රූපය පෙන්විය නොහැක - මෙතනින් බලන්න';
+        a.style.fontSize = '13px';
+        img.replaceWith(a);
+    }
+
+    // shown = තිරයේ පෙන්වන අංකය, n = Sheet එකේ මුල් පිළිතුරු අංකය (Server එකට යන්නේ මෙයයි)
+    function optionHTML(qNo, n, v, shown) {
+        if (shown === undefined) shown = n;
+        if (isImageLink(v)) {
+            const src = directImageLink(v);
+            return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${shown})</span><img class="opt-img" src="${src}" data-src="${v.trim()}" alt="පිළිතුර ${shown}" referrerpolicy="no-referrer" onerror="imgFailed(this)"></label>`;
+        }
+        return `<label><input type="radio" name="q_${qNo}" value="${n}"><span class="opt-t">${shown}) ${v}</span></label>`;
+    }
+
+    // පිළිතුරු මිශ්‍ර නොකළ යුතු ප්‍රශ්න: "A පමණි / A සහ B..." වැනි ප්‍රකාශ තේරීම් හෝ "ප්‍රස්තාරය 1" වැනි අංක සඳහන් පිළිතුරු
+    function keepOptionOrder(values) {
+        return values.some(function(v) {
+            if (typeof v !== 'string') return false;
+            const s = v.trim();
+            if (isImageLink(s)) return false;
+            return /පමණි|සියල්ල|ප්‍රස්තාරය\s*\d|රූපය\s*\d|ඉහත|^\(?[1-5]\)?$|^[A-E](\s|,|$)/.test(s);
+        });
+    }
+
+    // සසම්භාවී අංකයක් (හැකි නම් crypto භාවිතයෙන්)
+    function randomInt(max) {
+        if (window.crypto && window.crypto.getRandomValues) {
+            const a = new Uint32Array(1);
+            window.crypto.getRandomValues(a);
+            return a[0] % max;
+        }
+        return Math.floor(Math.random() * max);
+    }
+
+    // පිළිතුරු 5 ඉඩ ඇති පරිදි තීරු 5 / 3 / 2 / 1 කට සමාන පළලින් පෙළගැස්වීම
+    function layoutOptions() {
+        const boxes = document.querySelectorAll('#exam-sec .options');
+        boxes.forEach(function(box) {
+            box.classList.remove('opt-grid');
+            box.style.gridTemplateColumns = '';
+        });
+        boxes.forEach(function(box) {
+            const labels = box.querySelectorAll('label');
+            if (!labels.length) return;
+            const W = box.clientWidth;
+            let m = 0;
+            labels.forEach(function(l) { m = Math.max(m, l.getBoundingClientRect().width); });
+            const gap = 15;
+            let cols = 1;
+            for (const c of [5, 3, 2]) {
+                if (c * m + (c - 1) * gap <= W) { cols = c; break; }
+            }
+            box.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
+            box.classList.add('opt-grid');
+        });
+    }
+    let layoutTimer = null;
+    window.addEventListener('resize', function() {
+        clearTimeout(layoutTimer);
+        layoutTimer = setTimeout(layoutOptions, 150);
+    });
+
+    // එක් ප්‍රශ්නයක පිළිතුරු 5 (හැම attempt එකකදීම අලුතින්) මිශ්‍ර කර HTML සෑදීම
+    function optionsHTML(q) {
+        const values = [q.a, q.b, q.c, q.d, q.e];
+        let order = [1, 2, 3, 4, 5];
+        if (!keepOptionOrder(values)) {
+            for (let i = order.length - 1; i > 0; i--) {
+                const j = randomInt(i + 1);
+                const t = order[i]; order[i] = order[j]; order[j] = t;
+            }
+        }
+        return order.map(function(n, idx) {
+            return optionHTML(q.no, n, values[n - 1], idx + 1);
+        }).join("");
+    }
+
+    // Login කල් ඉකුත් වූ විට නැවත Login පිටුවට යැවීම
+    function handleAuth(data) {
+        if (data && data.status === "auth") {
+            authToken = "";
+            alert(data.message || "කරුණාකර නැවත පිවිසෙන්න.");
+            location.reload();
+            return true;
+        }
+        return false;
+    }
+
+    // ප්‍රශ්න පත්‍රය පුරා (මුල සිට අගටම) ශිෂ්‍යයාගේ ID එක සහිත watermark එක
+    // රූපයක් ලෙස නැවත නැවත පිරෙන නිසා paper එක කොතරම් දිග වුණත් අගටම පෙනේ
+    function buildWatermark() {
+        const wm = document.getElementById('exam-watermark');
+        const text = ("SFT · " + currentStudentId).replace(/[<>&"']/g, "");
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">' +
+                    '<text x="160" y="110" text-anchor="middle" transform="rotate(-30 160 100)" ' +
+                    'font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="rgba(13,110,253,0.08)">' +
+                    text + '</text></svg>';
+        wm.innerHTML = "";
+        wm.style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '")';
+        wm.style.backgroundRepeat = 'repeat';
+    }
+
+    // Copy, right-click, save, print, view-source යතුරු අවහිර කිරීම (ප්‍රශ්න පත්‍රය විවෘත විට)
+    function examOpen() {
+        return !document.getElementById('exam-sec').classList.contains('hidden');
+    }
+    document.addEventListener('contextmenu', function(e) { if (examOpen()) e.preventDefault(); });
+    ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function(ev) {
+        document.addEventListener(ev, function(e) {
+            if (examOpen() && !(e.target && e.target.tagName === 'INPUT')) e.preventDefault();
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        const k = (e.key || "").toLowerCase();
+        const ctrl = e.ctrlKey || e.metaKey;
+        if (k === 'f12' || (ctrl && ['c', 'x', 's', 'p', 'u', 'a'].indexOf(k) !== -1) ||
+            (ctrl && e.shiftKey && ['i', 'j', 'c'].indexOf(k) !== -1)) {
+            if (examOpen() || k === 'u' || k === 'f12') e.preventDefault();
+        }
+    });
+
+    async function login() {
+        const id = document.getElementById('studentId').value.trim();
+        const pwd = document.getElementById('password').value.trim();
+        const errorTag = document.getElementById('login-error');
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (!id || !pwd) {
+            errorTag.innerText = "කරුණාකර ID එක සහ Password එක ඇතුළත් කරන්න!";
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.innerText = "පරීක්ෂා කරමින් පවතී...";
+        errorTag.innerText = "";
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "login", studentId: id, password: pwd, deviceId: getDeviceId() })
+            });
+            const data = await response.json();
+
+            if (data.status === "promo") {
+                promoPass = pwd;
+                document.getElementById('password').value = "";
+                showPromoForm(data.streams || []);
+                return;
+            }
+            if (data.status === "success") {
+                currentStudentId = id;
+                authToken = data.token || "";
+                localStorage.setItem('sft_student_id', id);
+                document.getElementById('password').value = "";
+                document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + data.name + "!";
+                if (data.isTeacher) document.getElementById('teacher-panel').classList.remove('hidden');
+                loadAudio('audio-dash');
+                document.getElementById('login-sec').classList.add('hidden');
+                document.getElementById('dashboard-sec').classList.remove('hidden');
+            } else {
+                errorTag.innerText = data.message;
+            }
+        } catch (err) {
+            errorTag.innerText = "ජාල දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+            console.error(err);
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerText = "පිවිසෙන්න";
+        }
+    }
+
+    // ---------- Audio සටහන් (paper එක කරද්දී නොපෙන්වයි) ----------
+    let audioReq = 0;
+    async function loadAudio(targetId) {
+        const box = document.getElementById(targetId);
+        const paperId = (targetId === 'audio-result') ? currentPaperId : document.getElementById('paperSelect').value;
+        box.innerHTML = ""; box.classList.add('hidden');
+        if (!authToken || !paperId) return;
+        const reqNo = ++audioReq;
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "getAudio", token: authToken, paperId: paperId })
+            });
+            const data = await response.json();
+            if (reqNo !== audioReq && targetId === 'audio-dash') return; // පසුව වෙනත් paper එකක් තෝරා ඇත
+            if (data.status !== "success" || !data.clips || !data.clips.length) return;
+            let h = '<h4>🎧 මෙම පාඩමට අදාළ කෙටි සටහන් (Audio)</h4>';
+            h += data.clips.map(function(c, i) {
+                return '<div class="audio-item"><button type="button" onclick="playClip(\'' + targetId + '\',\'' +
+                       String(c.id).replace(/[^A-Za-z0-9_-]/g, '') + '\')">▶ අසන්න</button><span>' + esc(c.title) + '</span></div>';
+            }).join('');
+            h += '<div class="audio-player" id="' + targetId + '-player"></div>';
+            box.innerHTML = h;
+            box.classList.remove('hidden');
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // Drive ගොනුව browser එකේම audio player එකෙන් වාදනය කිරීම (ඉක්මනින් load වේ, වේගය වෙනස් කළ හැක)
+    // එය අසාර්ථක වුවහොත් Drive player එක භාවිත කරයි
+    // වේගය සැම විටම 1x වලින් ආරම්භ වේ (page එක විවෘත කර ඇති කාලය තුළ පමණක් තෝරාගත් වේගය මතක තබා ගනී)
+    let clipSpeed = 1;
+    try { localStorage.removeItem('sft_clip_speed'); } catch (e) {}
+
+    const clipCache = {};
+    let playReq = 0;
+
+    function speedRowHTML() {
+        return '<div class="speed-row">වේගය: ' + [0.75, 1, 1.25, 1.5].map(function(s) {
+            return '<button type="button" data-s="' + s + '" class="' + (s === clipSpeed ? 'on' : '') + '">' + s + 'x</button>';
+        }).join('') + '</div>';
+    }
+
+    async function playClip(targetId, fileId) {
+        const p = document.getElementById(targetId + '-player');
+        if (!p) return;
+        document.querySelectorAll('.audio-player audio').forEach(function(a) { try { a.pause(); } catch (e) {} });
+        const reqNo = ++playReq;
+        const paperId = (targetId === 'audio-result') ? currentPaperId : document.getElementById('paperSelect').value;
+        p.innerHTML = '<p style="margin:6px 0; color:#0b5ed7; font-size:14px;">⏳ Audio එක load වෙමින් පවතී...</p>';
+        try {
+            let url = clipCache[fileId];
+            if (!url) {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "getClip", token: authToken, paperId: paperId, fileId: fileId })
+                });
+                const data = await response.json();
+                if (handleAuth(data)) return;
+                if (data.status !== "success") throw new Error(data.message || "error");
+                const bin = atob(data.data);
+                const bytes = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                url = URL.createObjectURL(new Blob([bytes], { type: data.mime || 'audio/mpeg' }));
+                clipCache[fileId] = url;
+            }
+            if (reqNo !== playReq) return; // මේ අතරතුර වෙනත් clip එකක් තෝරා ඇත
+            p.innerHTML = '<audio controls preload="auto" src="' + url + '"></audio>' + speedRowHTML();
+            const au = p.querySelector('audio');
+            // Safari (Mac/iPhone) ඇතුළු සියලු browser වල වේගය නිවැරදිව යෙදීම
+            function applyRate() {
+                try { au.preservesPitch = true; au.webkitPreservesPitch = true; au.mozPreservesPitch = true; } catch (e) {}
+                au.defaultPlaybackRate = clipSpeed;
+                if (au.playbackRate !== clipSpeed) au.playbackRate = clipSpeed;
+            }
+            applyRate();
+            ['loadedmetadata', 'loadeddata', 'canplay', 'play', 'playing', 'seeked'].forEach(function(ev) {
+                au.addEventListener(ev, applyRate);
+            });
+            // browser එක වේගය නැවත 1x කළොත් තෝරාගත් වේගයට නැවත සැකසීම
+            au.addEventListener('ratechange', function() {
+                if (Math.abs(au.playbackRate - clipSpeed) > 0.01) setTimeout(applyRate, 0);
+            });
+            p.querySelectorAll('.speed-row button').forEach(function(b) {
+                b.onclick = function() {
+                    clipSpeed = parseFloat(b.getAttribute('data-s'));
+                    applyRate();
+                    // Safari සමහර විට play වෙමින් තිබියදී වේගය වෙනස් නොකරයි: මොහොතකට pause කර නැවත play කිරීම
+                    if (!au.paused) { au.pause(); applyRate(); au.play().then(applyRate).catch(function() {}); }
+                    p.querySelectorAll('.speed-row button').forEach(function(x) { x.classList.toggle('on', x === b); });
+                };
+            });
+            au.play().then(applyRate).catch(function() {});
+        } catch (err) {
+            console.error(err);
+            if (reqNo !== playReq) return;
+            // අසාර්ථක වුවහොත් Drive player එක
+            p.innerHTML = '<iframe src="https://drive.google.com/file/d/' + fileId + '/preview" allow="autoplay" style="height:90px;"></iframe>';
+        }
+    }
+
+    function stopAudio() {
+        document.querySelectorAll('.audio-player audio').forEach(function(a) { try { a.pause(); } catch (e) {} });
+        ['audio-dash', 'audio-result'].forEach(function(id) {
+            const b = document.getElementById(id);
+            b.innerHTML = ""; b.classList.add('hidden');
+        });
+    }
+
+    // ---------- Timer සහ උත්තර තාවකාලිකව සුරැකීම ----------
+    let timerInt = null, timerEnd = 0, autoSubmitting = false;
+
+    function ansKey() { return 'sft_ans_' + currentStudentId + '_' + currentPaperId + '_' + currentAttempt; }
+
+    function saveAnswersLocal() {
+        const a = {};
+        document.querySelectorAll('#questions-container input[type="radio"]:checked').forEach(function(r) {
+            a[r.name.replace('q_', '')] = r.value;
+        });
+        try { localStorage.setItem(ansKey(), JSON.stringify(a)); } catch (e) {}
+    }
+
+    function restoreAnswersLocal() {
+        let a = null;
+        try { a = JSON.parse(localStorage.getItem(ansKey()) || "null"); } catch (e) {}
+        if (!a) return;
+        Object.keys(a).forEach(function(q) {
+            document.getElementsByName('q_' + q).forEach(function(r) { if (r.value == a[q]) r.checked = true; });
+        });
+    }
+
+    function clearAnswersLocal() { try { localStorage.removeItem(ansKey()); } catch (e) {} }
+
+    function fmtClock(sec) {
+        sec = Math.max(0, Math.floor(sec));
+        const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+        return (h > 0 ? h + ":" : "") + (h > 0 && m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+    }
+
+    function stopTimer() {
+        if (timerInt) clearInterval(timerInt);
+        timerInt = null;
+        document.getElementById('timer-bar').classList.add('hidden');
+    }
+
+    function startTimer(remainingSec) {
+        stopTimer();
+        autoSubmitting = false;
+        const bar = document.getElementById('timer-bar');
+        timerEnd = Date.now() + remainingSec * 1000;
+        bar.classList.remove('hidden');
+        function tick() {
+            const left = (timerEnd - Date.now()) / 1000;
+            bar.innerText = "⏱ ඉතිරි කාලය: " + fmtClock(left);
+            bar.classList.toggle('low', left <= 600);
+            if (left <= 0) {
+                stopTimer();
+                if (!autoSubmitting) {
+                    autoSubmitting = true;
+                    alert("⏱ කාලය අවසන්! ඔබ දැනට ලබා දී ඇති උත්තර ස්වයංක්‍රීයව යොමු කෙරේ.");
+                    submitPaper(true);
+                }
+            }
+        }
+        tick();
+        timerInt = setInterval(tick, 1000);
+    }
+
+    // ප්‍රශ්න පත්‍රය කරමින් සිටියදී page එක වසා දැමීමට පෙර අනතුරු ඇඟවීම
+    window.addEventListener('beforeunload', function(e) {
+        if (examOpen()) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    // ---------- ගුරු ගිණුම: ශිෂ්‍ය ගිණුමක් පරීක්ෂා කිරීම ----------
+    function esc(t) {
+        return String(t == null ? "" : t).replace(/[&<>"']/g, function(c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    async function teacherCheck() {
+        const id = document.getElementById('tcId').value.trim();
+        const pwd = document.getElementById('tcPwd').value;
+        const box = document.getElementById('tc-result');
+        const btn = document.getElementById('tcCheckBtn');
+        if (!id) { box.innerHTML = '<p class="error-msg">ශිෂ්‍යයාගේ User ID එක ඇතුළත් කරන්න.</p>'; return; }
+        btn.disabled = true; btn.innerText = "පරීක්ෂා කරමින්...";
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "checkStudent", token: authToken, studentId: id, password: pwd })
+            });
+            const data = await response.json();
+            if (handleAuth(data)) return;
+            if (data.status !== "success") { box.innerHTML = '<p class="error-msg">' + esc(data.message) + '</p>'; return; }
+            let h = "";
+            if (data.found) {
+                h += '<p style="margin:10px 0 0 0;"><b>' + esc(data.name) + '</b> &nbsp;|&nbsp; ID: <b>' + esc(data.id) +
+                     '</b> &nbsp;|&nbsp; Password: <b>' + esc(data.password) + '</b></p>';
+            }
+            h += '<ul>' + data.checks.map(function(c) {
+                return '<li class="' + (c.ok ? 'ok' : 'bad') + '">' + (c.ok ? '✔ ' : '✖ ') + esc(c.text) + '</li>';
+            }).join('') + '</ul>';
+            if (data.found) {
+                h += '<p style="margin:5px 0; font-size:14px;"><b>කළ ප්‍රශ්න පත්‍ර:</b> ' +
+                     (data.attempts.length ? esc(data.attempts.join(" ,  ")) : "තවම කිසිවක් නැත") + '</p>';
+                h += '<div class="tc-btns">';
+                if (data.deviceLocked) h += '<button style="background:#198754;" onclick="teacherUnlock(\'device\')">Device අගුල ඉවත් කරන්න</button>';
+                if (data.failLocked) h += '<button style="background:#198754;" onclick="teacherUnlock(\'fails\')">වැරදි මුරපද අවහිරය ඉවත් කරන්න</button>';
+                h += '</div>';
+            }
+            box.innerHTML = h;
+        } catch (err) {
+            box.innerHTML = '<p class="error-msg">ජාල දෝෂයක් සිදු විය. නැවත උත්සාහ කරන්න.</p>';
+            console.error(err);
+        } finally {
+            btn.disabled = false; btn.innerText = "පරීක්ෂා කරන්න";
+        }
+    }
+
+    async function teacherUnlock(what) {
+        const id = document.getElementById('tcId').value.trim();
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "unlockStudent", token: authToken, studentId: id, what: what })
+            });
+            const data = await response.json();
+            if (handleAuth(data)) return;
+            alert(data.message);
+            teacherCheck();
+        } catch (err) {
+            alert("ජාල දෝෂයක් සිදු විය.");
+        }
+    }
+
+    // ප්‍රශ්න පත්‍රය තිරයේ පෙන්වීම (සාමාන්‍ය පත්‍ර, ප්‍රවර්ධන පත්‍රය හා ගුරු පරීක්ෂාව යන සියල්ලටම)
+    function showExam(data) {
+                // ප්‍රශ්න පත්‍රයට බැනර් රූපයක් ඇත්නම් එය පෙන්වීම (නැත්නම් කලින් වගේම මාතෘකාව)
+                const bannerImg = document.getElementById('paper-banner');
+                const bannerLink = (typeof data.banner === 'string') ? data.banner.trim() : '';
+                if (bannerLink && isImageLink(bannerLink)) {
+                    bannerImg.src = directImageLink(bannerLink);
+                    bannerImg.onerror = function() { bannerImg.classList.add('hidden'); document.getElementById('paper-title').classList.remove('hidden'); };
+                    bannerImg.classList.remove('hidden');
+                    document.getElementById('paper-title').classList.add('hidden');
+                } else {
+                    bannerImg.classList.add('hidden');
+                    bannerImg.removeAttribute('src');
+                    document.getElementById('paper-title').classList.remove('hidden');
+                }
+
+                let qContainer = document.getElementById('questions-container');
+                qContainer.innerHTML = "";
+
+                if (data.questions && data.questions.length > 0) {
+                    const qFragment = document.createDocumentFragment();
+                    
+                    data.questions.forEach((q) => {
+                        let qDiv = document.createElement('div');
+                        qDiv.className = "question";
+                        qDiv.setAttribute('data-qid', q.no);
+                        
+                        qDiv.innerHTML = `
+                            <div class="q-text"><span class="q-no">${q.no}.</span><div class="q-body">${String(q.q).replace(/>\s*\n\s*</g, '><').replace(/\n/g, '<br>')}</div></div>
+                            ${q.img ? `<div style="text-align:center; margin:10px 0;"><img src="${q.img}" alt="Diagram" style="max-width:100%; max-height:250px; border-radius:5px; border:1px solid #ddd;" loading="lazy"></div>` : ''}
+                            <div class="options">
+                                ${optionsHTML(q)}
+                            </div>
+                        `;
+                        qFragment.appendChild(qDiv);
+                    });
+
+                    qContainer.appendChild(qFragment);
+                    requestAnimationFrame(layoutOptions);
+                    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutOptions);
+                    qContainer.querySelectorAll('img').forEach(function(im) { if (!im.complete) im.addEventListener('load', layoutOptions); });
+                    buildWatermark();
+                    stopAudio();
+
+                    // කලින් සුරැකූ උත්තර (refresh වූවා නම්) නැවත පිරවීම සහ වෙනස් කරන සෑම විටම සුරැකීම
+                    restoreAnswersLocal();
+                    qContainer.onchange = saveAnswersLocal;
+
+                    if (data.timeLimitSec > 0) {
+                        startTimer(data.remainingSec);
+                    }
+
+                    document.getElementById('dashboard-sec').classList.add('hidden');
+                    document.getElementById('result-sec').classList.add('hidden');
+                    document.getElementById('exam-sec').classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                    return true;
+                }
+                return false;
+    }
+
+
+    // ================== නොමිලේ ප්‍රවර්ධන (Promo) ප්‍රශ්න පත්‍රය ==================
+    // වෙනම ප්‍රවර්ධන link එක: …/?promo  → සාමාන්‍ය Login පිටුව නොපෙන්වා කෙලින්ම WhatsApp අංකය ඉල්ලයි
+    const PROMO_LINK = true; // promo.html – සෑම විටම ප්‍රවර්ධන පිටුව
+    function openPromoLink() {
+        if (window.__promoOpened || !document.getElementById('promo-sec')) return;
+        window.__promoOpened = true;
+        showPromoForm([]);
+        document.getElementById('promoBackBtn').classList.add('hidden');
+        document.title = "SFT – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
+    }
+    if (PROMO_LINK) {
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openPromoLink);
+        else setTimeout(openPromoLink, 0);
+        window.addEventListener('load', openPromoLink);
+    }
+
+    function promoQuickLogin() {
+        document.getElementById('studentId').value = "Student";
+        document.getElementById('password').value = "123";
+        login();
+    }
+
+    function showPromoForm(streams) {
+        const box = document.getElementById('stream-choice');
+        if (!streams.length) streams = [{ key: 'tech', label: 'Technology (තාක්ෂණවේදය)' }, { key: 'bio', label: 'Bio (ජීව විද්‍යාව)' }, { key: 'maths', label: 'Maths (ගණිතය)' }];
+        box.innerHTML = streams.map(function(s) {
+            return '<label><input type="radio" name="promoStream" value="' + esc(s.key) + '"> ' + esc(s.label) + '</label>';
+        }).join('');
+        try { const last = localStorage.getItem('sft_promo_num'); if (last) document.getElementById('promoNumber').value = last; } catch (e) {}
+        document.getElementById('login-sec').classList.add('hidden');
+        document.getElementById('promo-sec').classList.remove('hidden');
+    }
+
+    async function promoStart() {
+        const num = document.getElementById('promoNumber').value.trim();
+        const sel = document.querySelector('input[name="promoStream"]:checked');
+        const err = document.getElementById('promo-error');
+        const btn = document.getElementById('promoStartBtn');
+        const digits = num.replace(/\D/g, '');
+        if (!/^(07\d{8}|947\d{8}|7\d{8})$/.test(digits)) { err.innerText = "කරුණාකර නිවැරදි WhatsApp අංකයක් ඇතුළත් කරන්න (උදා: 0771234567)."; return; }
+        if (!sel) { err.innerText = "කරුණාකර ඔබේ විෂය ධාරාව තෝරන්න."; return; }
+        btn.disabled = true; btn.innerText = "ප්‍රශ්න පත්‍රය ලෝඩ් වෙමින් පවතී...";
+        err.innerText = "";
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "promoStart", password: promoPass, number: num, stream: sel.value })
+            });
+            const data = await response.json();
+            if (handleAuth(data)) return;
+            if (data.status === "success") {
+                authToken = data.token || "";
+                promoNum = data.number || digits;
+                try { localStorage.setItem('sft_promo_num', promoNum); } catch (e) {}
+                currentStudentId = promoNum;
+                currentPaperId = "PROMO_" + data.paperId;
+                currentAttempt = 1;
+                promoMode = { teacher: false, paper: data.paperId };
+                document.getElementById('promo-sec').classList.add('hidden');
+                preparePromoExam(data);
+                if (!showExam(data)) { err.innerText = "ප්‍රශ්න හමු නොවීය!"; document.getElementById('promo-sec').classList.remove('hidden'); }
+            } else {
+                err.innerText = data.message;
+            }
+        } catch (e) {
+            err.innerText = "ජාල දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+            console.error(e);
+        } finally {
+            btn.disabled = false; btn.innerText = "ප්‍රශ්න පත්‍රය ආරම්භ කරන්න";
+        }
+    }
+
+    function preparePromoExam(data) {
+        document.getElementById('paper-title').innerText = data.title || "ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
+        document.getElementById('attempt-info').innerText = "🎁 නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය • ප්‍රශ්න " + (data.questions || []).length +
+            (data.timeLimitSec > 0 ? " • කාලය මිනිත්තු " + Math.round(data.timeLimitSec / 60) : "") + " • එක් වරක් පමණි";
+    }
+
+    // ගුරු ගිණුම: සිසුන්ට පෙනෙන ආකාරයටම (කිසිවක් සටහන් නොවේ)
+    async function teacherPromo(paper) {
+        const err = document.getElementById('tp-error');
+        err.innerText = "ලෝඩ් වෙමින් පවතී...";
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "getPromo", token: authToken, paper: paper })
+            });
+            const data = await response.json();
+            if (handleAuth(data)) return;
+            if (data.status === "success") {
+                stopTimer();
+                currentPaperId = "PROMO_" + paper;
+                currentAttempt = 1;
+                promoMode = { teacher: true, paper: paper };
+                preparePromoExam(data);
+                document.getElementById('attempt-info').innerText += "  (ගුරු පරීක්ෂාව – සටහන් නොවේ)";
+                if (showExam(data)) err.innerText = ""; else err.innerText = "ප්‍රශ්න හමු නොවීය!";
+            } else {
+                err.innerText = data.message;
+            }
+        } catch (e) {
+            err.innerText = "ජාල දෝෂයක් සිදු විය.";
+            console.error(e);
+        }
+    }
+
+    let lastPromoResult = null;
+    function showPromoResult(data) {
+        lastPromoResult = data;
+        document.getElementById('exam-sec').classList.add('hidden');
+        document.getElementById('result-sec').classList.remove('hidden');
+        document.getElementById('score-display').innerText = "ඔබේ ලකුණු: " + data.correct + " / " + data.total + "  (" + data.score.toFixed(0) + "%)";
+        document.getElementById('attempt-display').innerText = "🎁 නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය – සහභාගී වීම ගැන ස්තූතියි!";
+        document.getElementById('retry-btn').classList.add('hidden');
+        document.getElementById('audio-result').classList.add('hidden');
+        document.getElementById('wrong-questions-container').classList.add('hidden');
+        let h = '';
+        if (data.wrongQuestions && data.wrongQuestions.length > 0) {
+            h += '<p style="font-weight:bold; color:#721c24;">⚠️ වැරදුණු ප්‍රශ්න අංක: ' + esc(data.wrongQuestions.join(", ")) + '</p>';
+        }
+        if (data.link) {
+            h += '<a class="wa-btn" href="' + esc(data.link) + '" target="_blank" rel="noopener">💬 අපගේ WhatsApp Group එකට එක්වන්න</a>';
+        }
+        const exps = data.explanations || [];
+        if (exps.length) {
+            h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් බාගන්න (PDF)</button>';
+            h += '<div class="exp-list">' + exps.map(expHTML).join('') + '</div>';
+        } else {
+            h += '<p style="font-weight:bold; color:#198754;">🎉 සියලු ප්‍රශ්න නිවැරදියි! සුබ පැතුම්!</p>';
+        }
+        const box = document.getElementById('promo-result');
+        box.innerHTML = h;
+        box.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    function expHTML(x) {
+        const exp = String(x.exp || "").trim() ? String(x.exp).replace(/\n/g, '<br>') : '<i style="color:#888">පැහැදිලි කිරීමක් ඇතුළත් කර නොමැත.</i>';
+        return '<div class="exp-item"><div class="exp-h">ප්‍රශ්න අංක ' + esc(x.no) + ' &nbsp;→&nbsp; නිවැරදි පිළිතුර (' + esc(x.key) + ')' +
+               (x.keyText ? ': <span style="font-weight:normal">' + x.keyText + '</span>' : '') + '</div><div>' + exp + '</div></div>';
+    }
+
+    // පැහැදිලි කිරීම් අලුත් පිටුවක විවෘත කර "Save as PDF" ලෙස මුද්‍රණය කිරීම
+    function downloadExplanations() {
+        const d = lastPromoResult;
+        if (!d) return;
+        const w = window.open('', '_blank');
+        if (!w) { alert("Pop-up අවහිර කර ඇත. කරුණාකර pop-up වලට ඉඩ දී නැවත උත්සාහ කරන්න."); return; }
+        const date = new Date().toLocaleDateString('si-LK');
+        const html = '<!DOCTYPE html><html lang="si"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+            '<title>SFT ප්‍රවර්ධන පත්‍රය – පැහැදිලි කිරීම්</title>' +
+            '<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">' +
+            '<style>body{font-family:"Noto Serif Sinhala","Noto Serif","Iskoola Pota",serif;margin:24px;color:#222;line-height:1.6}' +
+            'h1{font-size:20px;margin:0;color:#0d3b66}.sub{color:#555;margin:4px 0 14px;font-size:14px}' +
+            '.top{border-bottom:3px solid #0d3b66;padding-bottom:10px;margin-bottom:12px}' +
+            '.score{font-weight:bold;font-size:16px;margin:10px 0}' +
+            '.exp-item{border:1px solid #ccd;border-left:5px solid #198754;border-radius:6px;padding:10px 12px;margin:10px 0;page-break-inside:avoid}' +
+            '.exp-h{font-weight:bold;color:#0f5132;margin-bottom:4px}.foot{margin-top:18px;font-size:13px;color:#555;border-top:1px solid #ccc;padding-top:8px}' +
+            '.bar{text-align:center;margin:0 0 14px}.bar button{font-size:16px;padding:10px 18px;background:#0d6efd;color:#fff;border:0;border-radius:6px}' +
+            '@media print{.bar{display:none}body{margin:12mm}}</style></head><body>' +
+            '<div class="bar"><button onclick="window.print()">📄 PDF ලෙස සුරකින්න / මුද්‍රණය කරන්න</button></div>' +
+            '<div class="top"><h1>' + esc(d.title || 'ප්‍රවර්ධන ප්‍රශ්න පත්‍රය') + '</h1>' +
+            '<div class="sub">වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් • ' + (promoNum ? 'WhatsApp: ' + esc(promoNum) + ' • ' : '') + esc(date) + '</div></div>' +
+            '<div class="score">ලකුණු: ' + d.correct + ' / ' + d.total + ' (' + d.score.toFixed(0) + '%)</div>' +
+            (d.explanations || []).map(expHTML).join('') +
+            '<div class="foot">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake) – SFT (Science For Technology)' +
+            (d.link ? '<br>WhatsApp Group: ' + esc(d.link) : '') + '</div>' +
+            '<script>window.onload=function(){setTimeout(function(){window.print();},700);};<\/script></body></html>';
+        w.document.open(); w.document.write(html); w.document.close();
+    }
+
+    async function loadPaper() {
+        promoMode = null;
+        currentPaperId = document.getElementById('paperSelect').value;
+        const errorTag = document.getElementById('dashboard-error');
+        const loadBtn = document.getElementById('loadPaperBtn');
+        
+        loadBtn.disabled = true;
+        stopTimer();
+        errorTag.innerText = "ප්‍රශ්න පත්‍රය ලෝඩ් වෙමින් පවතී, කරුණාකර රැඳී සිටින්න...";
+        
+        let paperNumberStr = currentPaperId.replace("PAPER_", "");
+        document.getElementById('paper-title').innerText = "ප්‍රශ්න පත්‍රය " + paperNumberStr;
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ 
+                    action: "getPaper", 
+                    token: authToken,
+                    paperId: currentPaperId 
+                })
+            });
+            const data = await response.json();
+            if (handleAuth(data)) return;
+
+            if (data.status === "success") {
+                let prevAttempts = (data.currentAttempt !== undefined) ? data.currentAttempt : 0;
+                currentAttempt = prevAttempts + 1;
+                let attemptsLeft = maxAttempts - currentAttempt;
+                
+                document.getElementById('attempt-info').innerText = `මෙය ඔබගේ හරියටම ${currentAttempt} වන උත්සාහයයි (Attempts ඉතිරි: ${attemptsLeft})`;
+
+                if (!showExam(data)) errorTag.innerText = "මෙම ප්‍රශ්න පත්‍රය සඳහා ප්‍රශ්න හමු නොවීය!";
+                else errorTag.innerText = "";
+            } else {
+                errorTag.innerText = data.message;
+            }
+        } catch (err) {
+            errorTag.innerText = "ප්‍රශ්න පත්‍රය ලබාගැනීමේ දෝෂයක් සිදු විය.";
+            console.error(err);
+        } finally {
+            loadBtn.disabled = false;
+        }
+    }
+
+    async function submitPaper(auto) {
+        let answers = {};
+        let unansweredQuestions = [];
+        let questionDivs = document.querySelectorAll('.question');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        questionDivs.forEach((div) => {
+            div.style.border = "1px solid #eee";
+            div.style.paddingBottom = "15px";
+            div.style.borderRadius = "0px";
+            div.style.backgroundColor = "transparent";
+        });
+
+        questionDivs.forEach((div) => {
+            let qNo = div.getAttribute('data-qid');
+            let radios = document.getElementsByName('q_' + qNo);
+            let answered = false;
+            for (let r of radios) {
+                if (r.checked) {
+                    answers[qNo] = r.value;
+                    answered = true;
+                }
+            }
+            if (!answered) {
+                unansweredQuestions.push(qNo);
+            }
+        });
+
+        if (!auto && unansweredQuestions.length > 0) {
+            let confirmMsg = `⚠️ ඔබට තවමත් පහත ප්‍රශ්න සඳහා පිළිතුරු ලබාදී නොමැත:\nප්‍රශ්න අංක: ${unansweredQuestions.join(", ")}\n\nඔබට මෙම හිස් ප්‍රශ්න එලෙසම (ලකුණු නොලැබෙන පරිදි) Submit කිරීමට අවශ්‍යද?`;
+            
+            if (!confirm(confirmMsg)) {
+                unansweredQuestions.forEach((qNo) => {
+                    let qDiv = document.querySelector(`.question[data-qid="${qNo}"]`);
+                    if (qDiv) {
+                        qDiv.style.border = "2px solid #dc3545";
+                        qDiv.style.borderRadius = "5px";
+                        qDiv.style.backgroundColor = "#fff8f8";
+                        qDiv.style.padding = "10px";
+                    }
+                });
+                
+                let firstUnanswered = document.querySelector(`.question[data-qid="${unansweredQuestions[0]}"]`);
+                if (firstUnanswered) {
+                    firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = "ප්‍රතිඵල සකස් කරමින් පවතී...";
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: (promoMode && promoMode.teacher) ? "submitPromo" : "submitPaper",
+                    token: authToken,
+                    paperId: currentPaperId,
+                    paper: promoMode ? promoMode.paper : "",
+                    answers: answers
+                })
+            });
+            const data = await response.json();
+            if (handleAuth(data)) return;
+
+            if (data.status === "success" && data.promo) {
+                stopTimer();
+                clearAnswersLocal();
+                showPromoResult(data);
+            } else if (data.status === "success") {
+                stopTimer();
+                clearAnswersLocal();
+                document.getElementById('promo-result').classList.add('hidden');
+                document.getElementById('exam-sec').classList.add('hidden');
+                document.getElementById('result-sec').classList.remove('hidden');
+                document.getElementById('score-display').innerText = "ඔබේ ලකුණු ප්‍රමාණය: " + data.score.toFixed(2) + "%";
+                document.getElementById('attempt-display').innerText = "මෙය ඔබ මෙම පත්‍රය කළ " + data.attempt + " වන වාරයයි.";
+
+                if (data.wrongQuestions && data.wrongQuestions.length > 0) {
+                    document.getElementById('wrong-q-list').innerText = data.wrongQuestions.join(", ");
+                    document.getElementById('wrong-questions-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('wrong-q-list').innerText = "කිසිදු ප්‍රශ්නයක් වැරදී නැත! සියල්ල නිවැරදියි. 🎉";
+                    document.getElementById('wrong-questions-container').classList.add('hidden');
+                }
+
+                loadAudio('audio-result');
+
+                // ගුරු ගිණුම: වැරදුණු / උත්තර නොදුන් ප්‍රශ්නවල විවරණ (සිසුන්ට පෙනෙන ආකාරයට)
+                if (data.teacherView && data.explanations && data.explanations.length) {
+                    lastPromoResult = data;
+                    const pb = document.getElementById('promo-result');
+                    pb.innerHTML = '<h3 style="margin:10px 0 6px;">📘 විවරණ (ගුරු පරීක්ෂාව)</h3>' +
+                        '<p style="font-size:13px; color:#666; margin:0 0 8px;">උත්තර කිසිවක් නොදී Submit කළොත් සියලු ප්‍රශ්නවල විවරණ පෙනේ.</p>' +
+                        '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 විවරණ PDF ලෙස බලන්න</button>' +
+                        '<div class="exp-list">' + data.explanations.map(expHTML).join('') + '</div>';
+                    pb.classList.remove('hidden');
+                }
+
+                if (data.attempt < maxAttempts) {
+                    document.getElementById('retry-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('retry-btn').classList.add('hidden');
+                }
+
+            } else {
+                alert(data.message);
+            }
+        } catch (err) {
+            console.error(err);
+            if (auto) {
+                // කාලය අවසන් වී ස්වයංක්‍රීයව යවන විට internet නොමැති නම් තත්පර 10කට වරක් නැවත උත්සාහ කිරීම
+                setTimeout(function() { submitPaper(true); }, 10000);
+            } else {
+                alert("ප්‍රතිඵල යැවීමේදී දෝෂයක් සිදු විය.");
+            }
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "උත්තර යොමු කරන්න (Submit)";
+        }
+    }
+</script>
+
+</body>
+</html>

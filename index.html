@@ -287,7 +287,7 @@
             <div class="cred">User ID: <span>Student</span> &nbsp; Password: <span>123</span></div>
             <button type="button" class="promo-btn" onclick="promoQuickLogin()">නොමිලේ ප්‍රශ්න පත්‍රය කරන්න</button>
         </div>
-        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: promo-4</p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: promo-5</p>
     </div>
 
     <!-- ප්‍රවර්ධන පත්‍රය: WhatsApp අංකය හා ධාරාව -->
@@ -968,12 +968,17 @@
     // ================== නොමිලේ ප්‍රවර්ධන (Promo) ප්‍රශ්න පත්‍රය ==================
     // වෙනම ප්‍රවර්ධන link එක: …/?promo  → සාමාන්‍ය Login පිටුව නොපෙන්වා කෙලින්ම WhatsApp අංකය ඉල්ලයි
     const PROMO_LINK = /[?&#]promo\b/i.test(location.search + location.hash);
+    function openPromoLink() {
+        if (window.__promoOpened || !document.getElementById('promo-sec')) return;
+        window.__promoOpened = true;
+        showPromoForm([]);
+        document.getElementById('promoBackBtn').classList.add('hidden');
+        document.title = "SFT – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
+    }
     if (PROMO_LINK) {
-        document.addEventListener('DOMContentLoaded', function() {
-            showPromoForm([]);
-            document.getElementById('promoBackBtn').classList.add('hidden');
-            document.title = "SFT – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
-        });
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openPromoLink);
+        else setTimeout(openPromoLink, 0);
+        window.addEventListener('load', openPromoLink);
     }
 
     function promoQuickLogin() {
