@@ -287,7 +287,7 @@
             <div class="cred">User ID: <span>Student</span> &nbsp; Password: <span>123</span></div>
             <button type="button" class="promo-btn" onclick="promoQuickLogin()">නොමිලේ ප්‍රශ්න පත්‍රය කරන්න</button>
         </div>
-        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: promo-6</p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: attempt-rules-1</p>
     </div>
 
     <!-- ප්‍රවර්ධන පත්‍රය: WhatsApp අංකය හා ධාරාව -->
@@ -406,6 +406,7 @@
     let promoMode = null;   // ප්‍රවර්ධන පත්‍රය: { teacher: true/false, paper: 'SFT'/'PHY' }
     let promoPass = "";
     let promoNum = "";
+    let minAnswered = 0;   // Submit කිරීමට අවම උත්තර ගණන (Server එකෙන්)
     let maxAttempts = 3;
 
     // මෙම උපාංගයට (browser එකට) අනන්‍ය හැඳුනුම් අංකයක් - එක් ගිණුමකට එක් උපාංගයක් පමණක් ඉඩ දීමට
@@ -905,6 +906,7 @@
 
     // ප්‍රශ්න පත්‍රය තිරයේ පෙන්වීම (සාමාන්‍ය පත්‍ර, ප්‍රවර්ධන පත්‍රය හා ගුරු පරීක්ෂාව යන සියල්ලටම)
     function showExam(data) {
+        minAnswered = (data && data.minAnswered) ? data.minAnswered : 0;
                 // ප්‍රශ්න පත්‍රයට බැනර් රූපයක් ඇත්නම් එය පෙන්වීම (නැත්නම් කලින් වගේම මාතෘකාව)
                 const bannerImg = document.getElementById('paper-banner');
                 const bannerLink = (typeof data.banner === 'string') ? data.banner.trim() : '';
@@ -1103,8 +1105,10 @@
 
     function expHTML(x) {
         const exp = String(x.exp || "").trim() ? String(x.exp).replace(/\n/g, '<br>') : '<i style="color:#888">පැහැදිලි කිරීමක් ඇතුළත් කර නොමැත.</i>';
-        return '<div class="exp-item"><div class="exp-h">ප්‍රශ්න අංක ' + esc(x.no) + ' &nbsp;→&nbsp; නිවැරදි පිළිතුර (' + esc(x.key) + ')' +
-               (x.keyText ? ': <span style="font-weight:normal">' + x.keyText + '</span>' : '') + '</div><div>' + exp + '</div></div>';
+        const head = (x.key !== undefined && x.key !== "")
+            ? ' &nbsp;→&nbsp; නිවැරදි පිළිතුර (' + esc(x.key) + ')' + (x.keyText ? ': <span style="font-weight:normal">' + x.keyText + '</span>' : '')
+            : '';
+        return '<div class="exp-item"><div class="exp-h">ප්‍රශ්න අංක ' + esc(x.no) + head + '</div><div>' + exp + '</div></div>';
     }
 
     // පැහැදිලි කිරීම් අලුත් පිටුවක විවෘත කර "Save as PDF" ලෙස මුද්‍රණය කිරීම
@@ -1127,8 +1131,8 @@
             '@media print{.bar{display:none}body{margin:12mm}}</style></head><body>' +
             '<div class="bar"><button onclick="window.print()">📄 PDF ලෙස සුරකින්න / මුද්‍රණය කරන්න</button></div>' +
             '<div class="top"><h1>' + esc(d.title || 'ප්‍රවර්ධන ප්‍රශ්න පත්‍රය') + '</h1>' +
-            '<div class="sub">වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් • ' + (promoNum ? 'WhatsApp: ' + esc(promoNum) + ' • ' : '') + esc(date) + '</div></div>' +
-            '<div class="score">ලකුණු: ' + d.correct + ' / ' + d.total + ' (' + d.score.toFixed(0) + '%)</div>' +
+            '<div class="sub">වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් • ' + (promoNum ? 'WhatsApp: ' + esc(promoNum) + ' • ' : (currentStudentId && !promoMode ? 'ID: ' + esc(currentStudentId) + ' • ' : '')) + esc(date) + '</div></div>' +
+            '<div class="score">' + (d.correct !== undefined ? 'ලකුණු: ' + d.correct + ' / ' + d.total + ' (' + d.score.toFixed(0) + '%)' : (d.expMessage ? esc(d.expMessage) : '')) + '</div>' +
             (d.explanations || []).map(expHTML).join('') +
             '<div class="foot">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake) – SFT (Science For Technology)' +
             (d.link ? '<br>WhatsApp Group: ' + esc(d.link) : '') + '</div>' +
@@ -1209,6 +1213,12 @@
             }
         });
 
+        const answeredCount = Object.keys(answers).length;
+        if (!auto && !promoMode && minAnswered > 0 && answeredCount < minAnswered) {
+            alert("⚠️ Submit කිරීමට අවම වශයෙන් ප්‍රශ්න " + minAnswered + " කට උත්තර දිය යුතුය.\nඔබ දැනට උත්තර දී ඇත්තේ ප්‍රශ්න " + answeredCount + " කට පමණි.");
+            return;
+        }
+
         if (!auto && unansweredQuestions.length > 0) {
             let confirmMsg = `⚠️ ඔබට තවමත් පහත ප්‍රශ්න සඳහා පිළිතුරු ලබාදී නොමැත:\nප්‍රශ්න අංක: ${unansweredQuestions.join(", ")}\n\nඔබට මෙම හිස් ප්‍රශ්න එලෙසම (ලකුණු නොලැබෙන පරිදි) Submit කිරීමට අවශ්‍යද?`;
             
@@ -1242,6 +1252,7 @@
                     token: authToken,
                     paperId: currentPaperId,
                     paper: promoMode ? promoMode.paper : "",
+                    auto: !!auto,
                     answers: answers
                 })
             });
@@ -1280,6 +1291,25 @@
                         '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 විවරණ PDF ලෙස බලන්න</button>' +
                         '<div class="exp-list">' + data.explanations.map(expHTML).join('') + '</div>';
                     pb.classList.remove('hidden');
+                }
+
+                // ⚠ මිනිත්තු 15ට අඩු / 3 වන වාරයෙන් පසු පැහැදිලි කිරීම්
+                if (!data.teacherView && (data.flagMessage || data.attempt >= maxAttempts)) {
+                    const pb = document.getElementById('promo-result');
+                    let h = '';
+                    if (data.flagMessage) {
+                        h += '<div style="background:#fff3cd;border:1px solid #ffc107;color:#664d03;border-radius:8px;padding:12px;font-weight:bold;margin:10px 0;">' + esc(data.flagMessage) + '</div>';
+                    }
+                    if (data.attempt >= maxAttempts && !data.flagMessage) {
+                        h += '<h3 style="margin:10px 0 6px;">📘 වාර 3ම වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම්</h3>';
+                        if (data.expMessage) h += '<p style="font-size:15px;color:#444;margin:0 0 8px;">' + esc(data.expMessage) + '</p>';
+                        if (data.explanations && data.explanations.length) {
+                            lastPromoResult = data;
+                            h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 පැහැදිලි කිරීම් බාගන්න (PDF)</button>' +
+                                 '<div class="exp-list">' + data.explanations.map(expHTML).join('') + '</div>';
+                        }
+                    }
+                    if (h) { pb.innerHTML = h; pb.classList.remove('hidden'); }
                 }
 
                 if (data.attempt < maxAttempts) {
