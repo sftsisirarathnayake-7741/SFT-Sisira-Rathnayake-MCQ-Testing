@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SFT MCQ Portal</title>
+    <title>SKR MCQ-Practising Education Portal</title>
     <!-- version: shuffle-1, one-device-1, teacher-check-1, space-fix-2, q-indent-1, greek-font-1 -->
     <!-- සිංහල අකුරු කිසිදු දෝෂයකින් තොරව පෙන්වන Google Font එක සම්බන්ධ කිරීම -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
@@ -180,7 +180,7 @@
         /* Print කිරීම අවහිර කිරීම */
         @media print {
             body * { display: none !important; }
-            body::after { content: "SFT MCQ Portal - මුද්‍රණය කිරීමට අවසර නැත"; display: block; font-size: 20px; padding: 40px; }
+            body::after { content: "SKR MCQ-Practising Education Portal - මුද්‍රණය කිරීමට අවසර නැත"; display: block; font-size: 20px; padding: 40px; }
         }
         /* Audio list */
         .audio-box {
@@ -271,7 +271,7 @@
 <div class="container">
     <!-- Login Section -->
     <div id="login-sec">
-        <h2>SFT MCQ Portal - පිවිසෙන්න</h2>
+        <h2>SKR MCQ-Practising Education Portal - පිවිසෙන්න</h2>
         <div class="form-group">
             <label style="font-weight: bold; color: #333;">Student ID:</label>
             <input type="text" id="studentId" placeholder="ඔබේ User ID එක ඇතුළත් කරන්න">
@@ -588,7 +588,7 @@
     // රූපයක් ලෙස නැවත නැවත පිරෙන නිසා paper එක කොතරම් දිග වුණත් අගටම පෙනේ
     function buildWatermark() {
         const wm = document.getElementById('exam-watermark');
-        const text = ("SFT · " + currentStudentId).replace(/[<>&"']/g, "");
+        const text = ("SKR · " + currentStudentId).replace(/[<>&"']/g, "");
         const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">' +
                     '<text x="160" y="110" text-anchor="middle" transform="rotate(-30 160 100)" ' +
                     'font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="rgba(13,110,253,0.08)">' +
@@ -975,7 +975,7 @@
         window.__promoOpened = true;
         showPromoForm([]);
         document.getElementById('promoBackBtn').classList.add('hidden');
-        document.title = "SFT – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
+        document.title = "SKR – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
     }
     if (PROMO_LINK) {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openPromoLink);
@@ -1119,7 +1119,7 @@
         if (!w) { alert("Pop-up අවහිර කර ඇත. කරුණාකර pop-up වලට ඉඩ දී නැවත උත්සාහ කරන්න."); return; }
         const date = new Date().toLocaleDateString('si-LK');
         const html = '<!DOCTYPE html><html lang="si"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
-            '<title>SFT ප්‍රවර්ධන පත්‍රය – පැහැදිලි කිරීම්</title>' +
+            '<title>SKR ප්‍රවර්ධන පත්‍රය – පැහැදිලි කිරීම්</title>' +
             '<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">' +
             '<style>body{font-family:"Noto Serif Sinhala","Noto Serif","Iskoola Pota",serif;margin:24px;color:#222;line-height:1.6}' +
             'h1{font-size:20px;margin:0;color:#0d3b66}.sub{color:#555;margin:4px 0 14px;font-size:14px}' +
@@ -1134,7 +1134,7 @@
             '<div class="sub">වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් • ' + (promoNum ? 'WhatsApp: ' + esc(promoNum) + ' • ' : (currentStudentId && !promoMode ? 'ID: ' + esc(currentStudentId) + ' • ' : '')) + esc(date) + '</div></div>' +
             '<div class="score">' + (d.correct !== undefined ? 'ලකුණු: ' + d.correct + ' / ' + d.total + ' (' + d.score.toFixed(0) + '%)' : (d.expMessage ? esc(d.expMessage) : '')) + '</div>' +
             (d.explanations || []).map(expHTML).join('') +
-            '<div class="foot">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake) – SFT (Science For Technology)' +
+            '<div class="foot">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake) – SKR MCQ-Practising Education Portal' +
             (d.link ? '<br>WhatsApp Group: ' + esc(d.link) : '') + '</div>' +
             '<script>window.onload=function(){setTimeout(function(){window.print();},700);};<\/script></body></html>';
         w.document.open(); w.document.write(html); w.document.close();
