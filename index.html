@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -180,7 +180,7 @@
         /* Print කිරීම අවහිර කිරීම */
         @media print {
             body * { display: none !important; }
-            body::after { content: "SKR MCQ-Practising Education Portal - මුද්‍රණය කිරීමට අවසර නැත"; display: block; font-size: 20px; padding: 40px; }
+            body::after { content: "SKR MCQ-Practising Education Portal - Printing is not allowed"; display: block; font-size: 20px; padding: 40px; }
         }
         /* Audio list */
         .audio-box {
@@ -271,60 +271,60 @@
 <div class="container">
     <!-- Login Section -->
     <div id="login-sec">
-        <h2>SKR MCQ-Practising Education Portal - පිවිසෙන්න</h2>
+        <h2>SKR MCQ-Practising Education Portal - Login</h2>
         <div class="form-group">
             <label style="font-weight: bold; color: #333;">Student ID:</label>
-            <input type="text" id="studentId" placeholder="ඔබේ User ID එක ඇතුළත් කරන්න">
+            <input type="text" id="studentId" placeholder="Enter your User ID">
         </div>
         <div class="form-group">
             <label style="font-weight: bold; color: #333;">Password:</label>
-            <input type="password" id="password" placeholder="මුරපදය ඇතුළත් කරන්න">
+            <input type="password" id="password" placeholder="Enter your password">
         </div>
-        <button id="loginBtn" onclick="login()">පිවිසෙන්න</button>
+        <button id="loginBtn" onclick="login()">Login</button>
         <p id="login-error" class="error-msg"></p>
         <div class="promo-hint hidden" id="promo-hint">
-            <div>🎁 <b>නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය</b> කිරීමට:</div>
+            <div>🎁 To do the <b>free promotional paper</b>:</div>
             <div class="cred">User ID: <span>Student</span> &nbsp; Password: <span>123</span></div>
-            <button type="button" class="promo-btn" onclick="promoQuickLogin()">නොමිලේ ප්‍රශ්න පත්‍රය කරන්න</button>
+            <button type="button" class="promo-btn" onclick="promoQuickLogin()">Do the free paper</button>
         </div>
         <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: attempt-rules-1</p>
     </div>
 
     <!-- ප්‍රවර්ධන පත්‍රය: WhatsApp අංකය හා ධාරාව -->
     <div id="promo-sec" class="hidden">
-        <h2>🎁 නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය</h2>
-        <p style="text-align:center; color:#555;">ප්‍රශ්න 25 • එක් WhatsApp අංකයකට එක් වරක් පමණි</p>
+        <h2>🎁 Free Promotional Paper</h2>
+        <p style="text-align:center; color:#555;">25 questions • Only once per WhatsApp number</p>
         <div class="form-group">
-            <label style="font-weight: bold; color: #333;">ඔබේ WhatsApp අංකය:</label>
-            <input type="tel" id="promoNumber" inputmode="numeric" maxlength="15" placeholder="උදා: 0771234567">
+            <label style="font-weight: bold; color: #333;">Your WhatsApp number:</label>
+            <input type="tel" id="promoNumber" inputmode="numeric" maxlength="15" placeholder="e.g. 0771234567">
         </div>
         <div class="form-group">
-            <label style="font-weight: bold; color: #333;">ඔබේ විෂය ධාරාව:</label>
+            <label style="font-weight: bold; color: #333;">Your subject stream:</label>
             <div class="stream-choice" id="stream-choice"></div>
         </div>
-        <button id="promoStartBtn" onclick="promoStart()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
+        <button id="promoStartBtn" onclick="promoStart()">Start the paper</button>
         <p id="promo-error" class="error-msg"></p>
-        <button type="button" id="promoBackBtn" onclick="location.reload()" style="background:#6c757d; margin-top:10px;">ආපසු</button>
+        <button type="button" id="promoBackBtn" onclick="location.reload()" style="background:#6c757d; margin-top:10px;">Back</button>
     </div>
 
     <!-- Dashboard / Paper Selection Section -->
     <div id="dashboard-sec" class="hidden">
-        <h2 id="welcome-msg">සාදරයෙන් පිළිගනිමු!</h2>
+        <h2 id="welcome-msg">Welcome!</h2>
 
         <!-- ගුරු ගිණුමට පමණක් පෙනෙන කොටස: ශිෂ්‍ය ගිණුමක් පරීක්ෂා කිරීම -->
         <div id="teacher-panel" class="hidden">
-            <h3>👨‍🏫 ශිෂ්‍ය ගිණුම පරීක්ෂා කරන්න</h3>
+            <h3>👨‍🏫 Check a student account</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <input type="text" id="tcId" placeholder="ශිෂ්‍යයාගේ User ID" style="flex: 1; min-width: 150px;">
-                <input type="text" id="tcPwd" placeholder="ශිෂ්‍යයා ගසන Password (අවශ්‍ය නම්)" style="flex: 1; min-width: 150px;">
+                <input type="text" id="tcId" placeholder="Student's User ID" style="flex: 1; min-width: 150px;">
+                <input type="text" id="tcPwd" placeholder="Password the student types (optional)" style="flex: 1; min-width: 150px;">
             </div>
-            <button id="tcCheckBtn" onclick="teacherCheck()">පරීක්ෂා කරන්න</button>
+            <button id="tcCheckBtn" onclick="teacherCheck()">Check</button>
             <div id="tc-result"></div>
             <div class="teacher-promo">
-                <h3 style="margin:0 0 6px;">🎁 ප්‍රවර්ධන පත්‍රය (සිසුන්ට පෙනෙන ආකාරයටම)</h3>
+                <h3 style="margin:0 0 6px;">🎁 Promotional paper (exactly as students see it)</h3>
                 <div class="tp-btns">
-                    <button onclick="teacherPromo('SFT')">SFT පත්‍රය බලන්න</button>
-                    <button onclick="teacherPromo('PHY')">PHY පත්‍රය බලන්න</button>
+                    <button onclick="teacherPromo('SFT')">View SFT paper</button>
+                    <button onclick="teacherPromo('PHY')">View PHY paper</button>
                 </div>
                 <p id="tp-error" class="error-msg"></p>
             </div>
@@ -332,31 +332,31 @@
         
         <!-- Paper Range Filter Section (වෙනස 4ක් වන පරිදි සකස් කළ කොටස) -->
         <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #e9ecef;">
-            <label style="color: #0d6efd; margin-bottom: 10px; font-weight: bold;">🔍 ප්‍රශ්න පත්‍ර පරාසය (Range) තෝරන්න (උදා: 1-5, 6-10):</label>
+            <label style="color: #0d6efd; margin-bottom: 10px; font-weight: bold;">🔍 Select a paper range (e.g. 1-5, 6-10):</label>
             <div style="display: flex; gap: 10px; align-items: center;">
                 <div style="flex: 1;">
-                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">සිට (From):</label>
+                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">From:</label>
                     <input type="number" id="rangeStart" value="1" min="1" max="1000">
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">දක්වා (To):</label>
+                    <label style="font-size: 13px; font-weight: normal; font-weight: bold; color: #333;">To:</label>
                     <input type="number" id="rangeEnd" value="5" min="1" max="1000">
                 </div>
                 <div style="flex: 1; align-self: flex-end;">
-                    <button type="button" onclick="generatePaperList()" style="margin-top: 0; padding: 12px;">ලැයිස්තුව පෙන්වන්න</button>
+                    <button type="button" onclick="generatePaperList()" style="margin-top: 0; padding: 12px;">Show list</button>
                 </div>
             </div>
             <p id="range-error" style="color: #dc3545; font-size: 13px; margin: 8px 0 0 0; font-weight: bold;"></p>
         </div>
 
         <div class="form-group">
-            <label style="font-weight: bold; color: #333;">ප්‍රශ්න පත්‍රය තෝරන්න:</label>
+            <label style="font-weight: bold; color: #333;">Select a paper:</label>
             <select id="paperSelect" onchange="loadAudio('audio-dash')">
                 <!-- ඩ්‍රොප්ඩවුන් මෙනුවට අදාළ පරාසය අනුව ප්‍රශ්න පත්‍ර 5ක් පමණක් පූරණය වේ -->
             </select>
         </div>
         <div id="audio-dash" class="audio-box hidden"></div>
-        <button id="loadPaperBtn" onclick="loadPaper()">ප්‍රශ්න පත්‍රය ආරම්භ කරන්න</button>
+        <button id="loadPaperBtn" onclick="loadPaper()">Start the paper</button>
         <p id="dashboard-error" class="error-msg"></p>
     </div>
 
@@ -364,26 +364,26 @@
     <div id="exam-sec" class="hidden">
        <div id="exam-watermark" aria-hidden="true"></div>
        <div id="timer-bar" class="hidden"></div>
-       <img id="paper-banner" class="hidden" alt="ප්‍රශ්න පත්‍රය" style="width: 100%; height: auto; vertical-align: top; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-       <h2 id="paper-title" style="text-align: center;">ප්‍රශ්න පත්‍රය</h2>
-       <p style="text-align: center; font-size: 1.1rem; font-weight: bold; color: #555; margin-bottom: 20px;">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake)</p>
+       <img id="paper-banner" class="hidden" alt="Question paper" style="width: 100%; height: auto; vertical-align: top; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+       <h2 id="paper-title" style="text-align: center;">Question Paper</h2>
+       <p style="text-align: center; font-size: 1.1rem; font-weight: bold; color: #555; margin-bottom: 20px;">Prepared by: Sisira Rathnayake</p>
        <p id="attempt-info" style="text-align: center; color: #0d6efd; font-weight: bold;"></p>
         <div id="questions-container"></div>
-        <button id="submitBtn" onclick="submitPaper()">උත්තර යොමු කරන්න (Submit)</button>
+        <button id="submitBtn" onclick="submitPaper()">Submit Answers</button>
     </div>
 
     <!-- Result Section -->
     <div id="result-sec" class="hidden">
-        <h2>ප්‍රතිඵලය</h2>
+        <h2>Result</h2>
         <p id="score-display" style="font-size: 20px; font-weight: bold;"></p>
         <p id="attempt-display"></p>
         
         <!-- වැරදුණු ප්‍රශ්න පෙන්වන පෙට්ටිය -->
         <div id="wrong-questions-container" class="hidden">
             <div class="wrong-box">
-                <strong>⚠️ ඔබට වැරදුණු ප්‍රශ්න අංක:</strong>
+                <strong>⚠️ Questions you got wrong:</strong>
                 <p id="wrong-q-list" style="margin-top: 5px; font-weight: bold;"></p>
-                <p style="font-size: 14px; margin-bottom: 0;">මෙම සිද්ධාන්ත නැවත කියවා බලා, ඊළඟ වාරයේදී එම ප්‍රශ්න නිවැරදි කරගන්න!</p>
+                <p style="font-size: 14px; margin-bottom: 0;">Revise these concepts and get these questions right in your next attempt!</p>
             </div>
         </div>
 
@@ -391,8 +391,8 @@
 
         <div id="audio-result" class="audio-box hidden"></div>
 
-        <button id="retry-btn" onclick="loadPaper()" class="hidden" style="background-color: #ffc107; color: #000;">නැවත උත්සාහ කරන්න (Try Again)</button>
-        <button onclick="location.reload()" style="margin-top: 10px;">මුල් පිටුවට යන්න</button>
+        <button id="retry-btn" onclick="loadPaper()" class="hidden" style="background-color: #ffc107; color: #000;">Try Again</button>
+        <button onclick="location.reload()" style="margin-top: 10px;">Go to Home Page</button>
     </div>
 </div>
 
@@ -442,18 +442,18 @@
         rangeError.innerText = "";
 
         if (isNaN(start) || isNaN(end)) {
-            rangeError.innerText = "කරුණාකර වලංගු අංක ඇතුළත් කරන්න!";
+            rangeError.innerText = "Please enter valid numbers!";
             return;
         }
 
         // To සහ From අතර වෙනස 4ක් විය යුතුය (උදා: 5 - 1 = 4)
         if ((end - start) !== 4) {
-            rangeError.innerText = "⚠️ 'From' සහ 'To' අතර වෙනස හරියටම 4ක් විය යුතුය (උදා: 1 සිට 5 දක්වා, 6 සිට 10 දක්වා).";
+            rangeError.innerText = "⚠️ The difference between 'From' and 'To' must be exactly 4 (e.g. 1 to 5, 6 to 10).";
             return;
         }
 
         if (start < 1 || end > 1000) {
-            rangeError.innerText = "පරාසය 1 සහ 1000 අතර තිබිය යුතුය!";
+            rangeError.innerText = "The range must be between 1 and 1000!";
             return;
         }
 
@@ -466,7 +466,7 @@
             opt.value = formattedIdNum;
 
             let formattedNum = i < 10 ? "0" + i : i;
-            opt.innerText = "ප්‍රශ්න පත්‍රය " + formattedNum;
+            opt.innerText = "Paper " + formattedNum;
             fragment.appendChild(opt);
         }
         selectTag.appendChild(fragment);
@@ -495,7 +495,7 @@
         a.href = img.getAttribute('data-src');
         a.target = '_blank';
         a.rel = 'noopener';
-        a.innerText = 'රූපය පෙන්විය නොහැක - මෙතනින් බලන්න';
+        a.innerText = 'Image could not be shown - click here to view';
         a.style.fontSize = '13px';
         img.replaceWith(a);
     }
@@ -505,7 +505,7 @@
         if (shown === undefined) shown = n;
         if (isImageLink(v)) {
             const src = directImageLink(v);
-            return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${shown})</span><img class="opt-img" src="${src}" data-src="${v.trim()}" alt="පිළිතුර ${shown}" referrerpolicy="no-referrer" onerror="imgFailed(this)"></label>`;
+            return `<label class="img-opt"><span><input type="radio" name="q_${qNo}" value="${n}"> ${shown})</span><img class="opt-img" src="${src}" data-src="${v.trim()}" alt="Option ${shown}" referrerpolicy="no-referrer" onerror="imgFailed(this)"></label>`;
         }
         return `<label><input type="radio" name="q_${qNo}" value="${n}"><span class="opt-t">${shown}) ${v}</span></label>`;
     }
@@ -516,7 +516,7 @@
             if (typeof v !== 'string') return false;
             const s = v.trim();
             if (isImageLink(s)) return false;
-            return /පමණි|සියල්ල|ප්‍රස්තාරය\s*\d|රූපය\s*\d|ඉහත|^\(?[1-5]\)?$|^[A-E](\s|,|$)/.test(s);
+            return /පමණි|සියල්ල|ප්‍රස්තාරය\s*\d|රූපය\s*\d|ඉහත|\bonly\b|\ball of\b|\bnone of\b|\babove\b|\b(graph|figure|diagram)\s*\d|^\(?[1-5]\)?$|^[A-E](\s|,|$)/i.test(s);
         });
     }
 
@@ -577,7 +577,7 @@
     function handleAuth(data) {
         if (data && data.status === "auth") {
             authToken = "";
-            alert(data.message || "කරුණාකර නැවත පිවිසෙන්න.");
+            alert(data.message || "Please log in again.");
             location.reload();
             return true;
         }
@@ -624,12 +624,12 @@
         const loginBtn = document.getElementById('loginBtn');
 
         if (!id || !pwd) {
-            errorTag.innerText = "කරුණාකර ID එක සහ Password එක ඇතුළත් කරන්න!";
+            errorTag.innerText = "Please enter your ID and password!";
             return;
         }
 
         loginBtn.disabled = true;
-        loginBtn.innerText = "පරීක්ෂා කරමින් පවතී...";
+        loginBtn.innerText = "Checking...";
         errorTag.innerText = "";
 
         try {
@@ -650,7 +650,7 @@
                 authToken = data.token || "";
                 localStorage.setItem('sft_student_id', id);
                 document.getElementById('password').value = "";
-                document.getElementById('welcome-msg').innerText = "සාදරයෙන් පිළිගනිමු, " + data.name + "!";
+                document.getElementById('welcome-msg').innerText = "Welcome, " + data.name + "!";
                 if (data.isTeacher) document.getElementById('teacher-panel').classList.remove('hidden');
                 loadAudio('audio-dash');
                 document.getElementById('login-sec').classList.add('hidden');
@@ -659,11 +659,11 @@
                 errorTag.innerText = data.message;
             }
         } catch (err) {
-            errorTag.innerText = "ජාල දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+            errorTag.innerText = "A network error occurred. Please try again.";
             console.error(err);
         } finally {
             loginBtn.disabled = false;
-            loginBtn.innerText = "පිවිසෙන්න";
+            loginBtn.innerText = "Login";
         }
     }
 
@@ -683,10 +683,10 @@
             const data = await response.json();
             if (reqNo !== audioReq && targetId === 'audio-dash') return; // පසුව වෙනත් paper එකක් තෝරා ඇත
             if (data.status !== "success" || !data.clips || !data.clips.length) return;
-            let h = '<h4>🎧 මෙම පාඩමට අදාළ කෙටි සටහන් (Audio)</h4>';
+            let h = '<h4>🎧 Short audio notes for this lesson</h4>';
             h += data.clips.map(function(c, i) {
                 return '<div class="audio-item"><button type="button" onclick="playClip(\'' + targetId + '\',\'' +
-                       String(c.id).replace(/[^A-Za-z0-9_-]/g, '') + '\')">▶ අසන්න</button><span>' + esc(c.title) + '</span></div>';
+                       String(c.id).replace(/[^A-Za-z0-9_-]/g, '') + '\')">▶ Listen</button><span>' + esc(c.title) + '</span></div>';
             }).join('');
             h += '<div class="audio-player" id="' + targetId + '-player"></div>';
             box.innerHTML = h;
@@ -706,7 +706,7 @@
     let playReq = 0;
 
     function speedRowHTML() {
-        return '<div class="speed-row">වේගය: ' + [0.75, 1, 1.25, 1.5].map(function(s) {
+        return '<div class="speed-row">Speed: ' + [0.75, 1, 1.25, 1.5].map(function(s) {
             return '<button type="button" data-s="' + s + '" class="' + (s === clipSpeed ? 'on' : '') + '">' + s + 'x</button>';
         }).join('') + '</div>';
     }
@@ -717,7 +717,7 @@
         document.querySelectorAll('.audio-player audio').forEach(function(a) { try { a.pause(); } catch (e) {} });
         const reqNo = ++playReq;
         const paperId = (targetId === 'audio-result') ? currentPaperId : document.getElementById('paperSelect').value;
-        p.innerHTML = '<p style="margin:6px 0; color:#0b5ed7; font-size:14px;">⏳ Audio එක load වෙමින් පවතී...</p>';
+        p.innerHTML = '<p style="margin:6px 0; color:#0b5ed7; font-size:14px;">⏳ Loading audio...</p>';
         try {
             let url = clipCache[fileId];
             if (!url) {
@@ -821,13 +821,13 @@
         bar.classList.remove('hidden');
         function tick() {
             const left = (timerEnd - Date.now()) / 1000;
-            bar.innerText = "⏱ ඉතිරි කාලය: " + fmtClock(left);
+            bar.innerText = "⏱ Time left: " + fmtClock(left);
             bar.classList.toggle('low', left <= 600);
             if (left <= 0) {
                 stopTimer();
                 if (!autoSubmitting) {
                     autoSubmitting = true;
-                    alert("⏱ කාලය අවසන්! ඔබ දැනට ලබා දී ඇති උත්තර ස්වයංක්‍රීයව යොමු කෙරේ.");
+                    alert("⏱ Time is up! The answers you have given so far will be submitted automatically.");
                     submitPaper(true);
                 }
             }
@@ -853,8 +853,8 @@
         const pwd = document.getElementById('tcPwd').value;
         const box = document.getElementById('tc-result');
         const btn = document.getElementById('tcCheckBtn');
-        if (!id) { box.innerHTML = '<p class="error-msg">ශිෂ්‍යයාගේ User ID එක ඇතුළත් කරන්න.</p>'; return; }
-        btn.disabled = true; btn.innerText = "පරීක්ෂා කරමින්...";
+        if (!id) { box.innerHTML = '<p class="error-msg">Enter the student User ID.</p>'; return; }
+        btn.disabled = true; btn.innerText = "Checking...";
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: "POST",
@@ -872,19 +872,19 @@
                 return '<li class="' + (c.ok ? 'ok' : 'bad') + '">' + (c.ok ? '✔ ' : '✖ ') + esc(c.text) + '</li>';
             }).join('') + '</ul>';
             if (data.found) {
-                h += '<p style="margin:5px 0; font-size:14px;"><b>කළ ප්‍රශ්න පත්‍ර:</b> ' +
-                     (data.attempts.length ? esc(data.attempts.join(" ,  ")) : "තවම කිසිවක් නැත") + '</p>';
+                h += '<p style="margin:5px 0; font-size:14px;"><b>Papers attempted:</b> ' +
+                     (data.attempts.length ? esc(data.attempts.join(" ,  ")) : "None yet") + '</p>';
                 h += '<div class="tc-btns">';
-                if (data.deviceLocked) h += '<button style="background:#198754;" onclick="teacherUnlock(\'device\')">Device අගුල ඉවත් කරන්න</button>';
-                if (data.failLocked) h += '<button style="background:#198754;" onclick="teacherUnlock(\'fails\')">වැරදි මුරපද අවහිරය ඉවත් කරන්න</button>';
+                if (data.deviceLocked) h += '<button style="background:#198754;" onclick="teacherUnlock(\'device\')">Remove device lock</button>';
+                if (data.failLocked) h += '<button style="background:#198754;" onclick="teacherUnlock(\'fails\')">Remove wrong-password block</button>';
                 h += '</div>';
             }
             box.innerHTML = h;
         } catch (err) {
-            box.innerHTML = '<p class="error-msg">ජාල දෝෂයක් සිදු විය. නැවත උත්සාහ කරන්න.</p>';
+            box.innerHTML = '<p class="error-msg">A network error occurred. Please try again.</p>';
             console.error(err);
         } finally {
-            btn.disabled = false; btn.innerText = "පරීක්ෂා කරන්න";
+            btn.disabled = false; btn.innerText = "Check";
         }
     }
 
@@ -900,7 +900,7 @@
             alert(data.message);
             teacherCheck();
         } catch (err) {
-            alert("ජාල දෝෂයක් සිදු විය.");
+            alert("A network error occurred.");
         }
     }
 
@@ -975,7 +975,7 @@
         window.__promoOpened = true;
         showPromoForm([]);
         document.getElementById('promoBackBtn').classList.add('hidden');
-        document.title = "SKR – නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
+        document.title = "SKR – Free Promotional Paper";
     }
     if (PROMO_LINK) {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openPromoLink);
@@ -991,7 +991,7 @@
 
     function showPromoForm(streams) {
         const box = document.getElementById('stream-choice');
-        if (!streams.length) streams = [{ key: 'tech', label: 'Technology (තාක්ෂණවේදය)' }, { key: 'bio', label: 'Bio (ජීව විද්‍යාව)' }, { key: 'maths', label: 'Maths (ගණිතය)' }];
+        if (!streams.length) streams = [{ key: 'tech', label: 'Technology' }, { key: 'bio', label: 'Biology' }, { key: 'maths', label: 'Maths' }];
         box.innerHTML = streams.map(function(s) {
             return '<label><input type="radio" name="promoStream" value="' + esc(s.key) + '"> ' + esc(s.label) + '</label>';
         }).join('');
@@ -1006,9 +1006,9 @@
         const err = document.getElementById('promo-error');
         const btn = document.getElementById('promoStartBtn');
         const digits = num.replace(/\D/g, '');
-        if (!/^(07\d{8}|947\d{8}|7\d{8})$/.test(digits)) { err.innerText = "කරුණාකර නිවැරදි WhatsApp අංකයක් ඇතුළත් කරන්න (උදා: 0771234567)."; return; }
-        if (!sel) { err.innerText = "කරුණාකර ඔබේ විෂය ධාරාව තෝරන්න."; return; }
-        btn.disabled = true; btn.innerText = "ප්‍රශ්න පත්‍රය ලෝඩ් වෙමින් පවතී...";
+        if (!/^(07\d{8}|947\d{8}|7\d{8})$/.test(digits)) { err.innerText = "Please enter a valid WhatsApp number (e.g. 0771234567)."; return; }
+        if (!sel) { err.innerText = "Please select your subject stream."; return; }
+        btn.disabled = true; btn.innerText = "Loading the paper...";
         err.innerText = "";
         try {
             const response = await fetch(SCRIPT_URL, {
@@ -1027,28 +1027,28 @@
                 promoMode = { teacher: false, paper: data.paperId };
                 document.getElementById('promo-sec').classList.add('hidden');
                 preparePromoExam(data);
-                if (!showExam(data)) { err.innerText = "ප්‍රශ්න හමු නොවීය!"; document.getElementById('promo-sec').classList.remove('hidden'); }
+                if (!showExam(data)) { err.innerText = "No questions found!"; document.getElementById('promo-sec').classList.remove('hidden'); }
             } else {
                 err.innerText = data.message;
             }
         } catch (e) {
-            err.innerText = "ජාල දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+            err.innerText = "A network error occurred. Please try again.";
             console.error(e);
         } finally {
-            btn.disabled = false; btn.innerText = "ප්‍රශ්න පත්‍රය ආරම්භ කරන්න";
+            btn.disabled = false; btn.innerText = "Start the paper";
         }
     }
 
     function preparePromoExam(data) {
-        document.getElementById('paper-title').innerText = data.title || "ප්‍රවර්ධන ප්‍රශ්න පත්‍රය";
-        document.getElementById('attempt-info').innerText = "🎁 නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය • ප්‍රශ්න " + (data.questions || []).length +
-            (data.timeLimitSec > 0 ? " • කාලය මිනිත්තු " + Math.round(data.timeLimitSec / 60) : "") + " • එක් වරක් පමණි";
+        document.getElementById('paper-title').innerText = data.title || "Promotional Paper";
+        document.getElementById('attempt-info').innerText = "🎁 Free Promotional Paper • " + (data.questions || []).length + " questions" +
+            (data.timeLimitSec > 0 ? " • Time: " + Math.round(data.timeLimitSec / 60) + " minutes" : "") + " • One attempt only";
     }
 
     // ගුරු ගිණුම: සිසුන්ට පෙනෙන ආකාරයටම (කිසිවක් සටහන් නොවේ)
     async function teacherPromo(paper) {
         const err = document.getElementById('tp-error');
-        err.innerText = "ලෝඩ් වෙමින් පවතී...";
+        err.innerText = "Loading...";
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: "POST",
@@ -1062,13 +1062,13 @@
                 currentAttempt = 1;
                 promoMode = { teacher: true, paper: paper };
                 preparePromoExam(data);
-                document.getElementById('attempt-info').innerText += "  (ගුරු පරීක්ෂාව – සටහන් නොවේ)";
-                if (showExam(data)) err.innerText = ""; else err.innerText = "ප්‍රශ්න හමු නොවීය!";
+                document.getElementById('attempt-info').innerText += "  (Teacher preview – not recorded)";
+                if (showExam(data)) err.innerText = ""; else err.innerText = "No questions found!";
             } else {
                 err.innerText = data.message;
             }
         } catch (e) {
-            err.innerText = "ජාල දෝෂයක් සිදු විය.";
+            err.innerText = "A network error occurred.";
             console.error(e);
         }
     }
@@ -1078,24 +1078,24 @@
         lastPromoResult = data;
         document.getElementById('exam-sec').classList.add('hidden');
         document.getElementById('result-sec').classList.remove('hidden');
-        document.getElementById('score-display').innerText = "ඔබේ ලකුණු: " + data.correct + " / " + data.total + "  (" + data.score.toFixed(0) + "%)";
-        document.getElementById('attempt-display').innerText = "🎁 නොමිලේ ප්‍රවර්ධන ප්‍රශ්න පත්‍රය – සහභාගී වීම ගැන ස්තූතියි!";
+        document.getElementById('score-display').innerText = "Your score: " + data.correct + " / " + data.total + "  (" + data.score.toFixed(0) + "%)";
+        document.getElementById('attempt-display').innerText = "🎁 Free Promotional Paper – thank you for taking part!";
         document.getElementById('retry-btn').classList.add('hidden');
         document.getElementById('audio-result').classList.add('hidden');
         document.getElementById('wrong-questions-container').classList.add('hidden');
         let h = '';
         if (data.wrongQuestions && data.wrongQuestions.length > 0) {
-            h += '<p style="font-weight:bold; color:#721c24;">⚠️ වැරදුණු ප්‍රශ්න අංක: ' + esc(data.wrongQuestions.join(", ")) + '</p>';
+            h += '<p style="font-weight:bold; color:#721c24;">⚠️ Questions you got wrong: ' + esc(data.wrongQuestions.join(", ")) + '</p>';
         }
         if (data.link) {
-            h += '<a class="wa-btn" href="' + esc(data.link) + '" target="_blank" rel="noopener">💬 අපගේ WhatsApp Group එකට එක්වන්න</a>';
+            h += '<a class="wa-btn" href="' + esc(data.link) + '" target="_blank" rel="noopener">💬 Join our WhatsApp Group</a>';
         }
         const exps = data.explanations || [];
         if (exps.length) {
-            h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් බාගන්න (PDF)</button>';
+            h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 Download explanations for wrong answers (PDF)</button>';
             h += '<div class="exp-list">' + exps.map(expHTML).join('') + '</div>';
         } else {
-            h += '<p style="font-weight:bold; color:#198754;">🎉 සියලු ප්‍රශ්න නිවැරදියි! සුබ පැතුම්!</p>';
+            h += '<p style="font-weight:bold; color:#198754;">🎉 All answers correct! Congratulations!</p>';
         }
         const box = document.getElementById('promo-result');
         box.innerHTML = h;
@@ -1104,11 +1104,11 @@
     }
 
     function expHTML(x) {
-        const exp = String(x.exp || "").trim() ? String(x.exp).replace(/\n/g, '<br>') : '<i style="color:#888">පැහැදිලි කිරීමක් ඇතුළත් කර නොමැත.</i>';
+        const exp = String(x.exp || "").trim() ? String(x.exp).replace(/\n/g, '<br>') : '<i style="color:#888">No explanation has been added.</i>';
         const head = (x.key !== undefined && x.key !== "")
-            ? ' &nbsp;→&nbsp; නිවැරදි පිළිතුර (' + esc(x.key) + ')' + (x.keyText ? ': <span style="font-weight:normal">' + x.keyText + '</span>' : '')
+            ? ' &nbsp;→&nbsp; Correct answer (' + esc(x.key) + ')' + (x.keyText ? ': <span style="font-weight:normal">' + x.keyText + '</span>' : '')
             : '';
-        return '<div class="exp-item"><div class="exp-h">ප්‍රශ්න අංක ' + esc(x.no) + head + '</div><div>' + exp + '</div></div>';
+        return '<div class="exp-item"><div class="exp-h">Question ' + esc(x.no) + head + '</div><div>' + exp + '</div></div>';
     }
 
     // පැහැදිලි කිරීම් අලුත් පිටුවක විවෘත කර "Save as PDF" ලෙස මුද්‍රණය කිරීම
@@ -1116,10 +1116,10 @@
         const d = lastPromoResult;
         if (!d) return;
         const w = window.open('', '_blank');
-        if (!w) { alert("Pop-up අවහිර කර ඇත. කරුණාකර pop-up වලට ඉඩ දී නැවත උත්සාහ කරන්න."); return; }
+        if (!w) { alert("Pop-ups are blocked. Please allow pop-ups and try again."); return; }
         const date = new Date().toLocaleDateString('si-LK');
-        const html = '<!DOCTYPE html><html lang="si"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
-            '<title>SKR ප්‍රවර්ධන පත්‍රය – පැහැදිලි කිරීම්</title>' +
+        const html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+            '<title>SKR – Explanations</title>' +
             '<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">' +
             '<style>body{font-family:"Noto Serif Sinhala","Noto Serif","Iskoola Pota",serif;margin:24px;color:#222;line-height:1.6}' +
             'h1{font-size:20px;margin:0;color:#0d3b66}.sub{color:#555;margin:4px 0 14px;font-size:14px}' +
@@ -1129,12 +1129,12 @@
             '.exp-h{font-weight:bold;color:#0f5132;margin-bottom:4px}.foot{margin-top:18px;font-size:13px;color:#555;border-top:1px solid #ccc;padding-top:8px}' +
             '.bar{text-align:center;margin:0 0 14px}.bar button{font-size:16px;padding:10px 18px;background:#0d6efd;color:#fff;border:0;border-radius:6px}' +
             '@media print{.bar{display:none}body{margin:12mm}}</style></head><body>' +
-            '<div class="bar"><button onclick="window.print()">📄 PDF ලෙස සුරකින්න / මුද්‍රණය කරන්න</button></div>' +
-            '<div class="top"><h1>' + esc(d.title || 'ප්‍රවර්ධන ප්‍රශ්න පත්‍රය') + '</h1>' +
-            '<div class="sub">වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම් • ' + (promoNum ? 'WhatsApp: ' + esc(promoNum) + ' • ' : (currentStudentId && !promoMode ? 'ID: ' + esc(currentStudentId) + ' • ' : '')) + esc(date) + '</div></div>' +
-            '<div class="score">' + (d.correct !== undefined ? 'ලකුණු: ' + d.correct + ' / ' + d.total + ' (' + d.score.toFixed(0) + '%)' : (d.expMessage ? esc(d.expMessage) : '')) + '</div>' +
+            '<div class="bar"><button onclick="window.print()">📄 Save as PDF / Print</button></div>' +
+            '<div class="top"><h1>' + esc(d.title || 'Promotional Paper') + '</h1>' +
+            '<div class="sub">Explanations for wrong answers • ' + (promoNum ? 'WhatsApp: ' + esc(promoNum) + ' • ' : (currentStudentId && !promoMode ? 'ID: ' + esc(currentStudentId) + ' • ' : '')) + esc(date) + '</div></div>' +
+            '<div class="score">' + (d.correct !== undefined ? 'Score: ' + d.correct + ' / ' + d.total + ' (' + d.score.toFixed(0) + '%)' : (d.expMessage ? esc(d.expMessage) : '')) + '</div>' +
             (d.explanations || []).map(expHTML).join('') +
-            '<div class="foot">සකස් කළේ: සිසිර රත්නායක (Sisira Rathnayake) – SKR MCQ-Practising Education Portal' +
+            '<div class="foot">Prepared by: Sisira Rathnayake – SKR MCQ-Practising Education Portal' +
             (d.link ? '<br>WhatsApp Group: ' + esc(d.link) : '') + '</div>' +
             '<script>window.onload=function(){setTimeout(function(){window.print();},700);};<\/script></body></html>';
         w.document.open(); w.document.write(html); w.document.close();
@@ -1148,10 +1148,10 @@
         
         loadBtn.disabled = true;
         stopTimer();
-        errorTag.innerText = "ප්‍රශ්න පත්‍රය ලෝඩ් වෙමින් පවතී, කරුණාකර රැඳී සිටින්න...";
+        errorTag.innerText = "Loading the paper, please wait...";
         
         let paperNumberStr = currentPaperId.replace("PAPER_", "");
-        document.getElementById('paper-title').innerText = "ප්‍රශ්න පත්‍රය " + paperNumberStr;
+        document.getElementById('paper-title').innerText = "Paper " + paperNumberStr;
 
         try {
             const response = await fetch(SCRIPT_URL, {
@@ -1170,15 +1170,15 @@
                 currentAttempt = prevAttempts + 1;
                 let attemptsLeft = maxAttempts - currentAttempt;
                 
-                document.getElementById('attempt-info').innerText = `මෙය ඔබගේ හරියටම ${currentAttempt} වන උත්සාහයයි (Attempts ඉතිරි: ${attemptsLeft})`;
+                document.getElementById('attempt-info').innerText = `This is attempt ${currentAttempt} (Attempts left: ${attemptsLeft})`;
 
-                if (!showExam(data)) errorTag.innerText = "මෙම ප්‍රශ්න පත්‍රය සඳහා ප්‍රශ්න හමු නොවීය!";
+                if (!showExam(data)) errorTag.innerText = "No questions found for this paper!";
                 else errorTag.innerText = "";
             } else {
                 errorTag.innerText = data.message;
             }
         } catch (err) {
-            errorTag.innerText = "ප්‍රශ්න පත්‍රය ලබාගැනීමේ දෝෂයක් සිදු විය.";
+            errorTag.innerText = "An error occurred while loading the paper.";
             console.error(err);
         } finally {
             loadBtn.disabled = false;
@@ -1215,12 +1215,12 @@
 
         const answeredCount = Object.keys(answers).length;
         if (!auto && !promoMode && minAnswered > 0 && answeredCount < minAnswered) {
-            alert("⚠️ Submit කිරීමට අවම වශයෙන් ප්‍රශ්න " + minAnswered + " කට උත්තර දිය යුතුය.\nඔබ දැනට උත්තර දී ඇත්තේ ප්‍රශ්න " + answeredCount + " කට පමණි.");
+            alert("⚠️ You must answer at least " + minAnswered + " questions to submit.\nYou have answered only " + answeredCount + " so far.");
             return;
         }
 
         if (!auto && unansweredQuestions.length > 0) {
-            let confirmMsg = `⚠️ ඔබට තවමත් පහත ප්‍රශ්න සඳහා පිළිතුරු ලබාදී නොමැත:\nප්‍රශ්න අංක: ${unansweredQuestions.join(", ")}\n\nඔබට මෙම හිස් ප්‍රශ්න එලෙසම (ලකුණු නොලැබෙන පරිදි) Submit කිරීමට අවශ්‍යද?`;
+            let confirmMsg = `⚠️ You have not answered the following questions yet:\nQuestion numbers: ${unansweredQuestions.join(", ")}\n\nDo you want to submit with these left blank (they will get no marks)?`;
             
             if (!confirm(confirmMsg)) {
                 unansweredQuestions.forEach((qNo) => {
@@ -1242,7 +1242,7 @@
         }
 
         submitBtn.disabled = true;
-        submitBtn.innerText = "ප්‍රතිඵල සකස් කරමින් පවතී...";
+        submitBtn.innerText = "Preparing your results...";
 
         try {
             const response = await fetch(SCRIPT_URL, {
@@ -1269,14 +1269,14 @@
                 document.getElementById('promo-result').classList.add('hidden');
                 document.getElementById('exam-sec').classList.add('hidden');
                 document.getElementById('result-sec').classList.remove('hidden');
-                document.getElementById('score-display').innerText = "ඔබේ ලකුණු ප්‍රමාණය: " + data.score.toFixed(2) + "%";
-                document.getElementById('attempt-display').innerText = "මෙය ඔබ මෙම පත්‍රය කළ " + data.attempt + " වන වාරයයි.";
+                document.getElementById('score-display').innerText = "Your score: " + data.score.toFixed(2) + "%";
+                document.getElementById('attempt-display').innerText = "This was attempt " + data.attempt + " for this paper.";
 
                 if (data.wrongQuestions && data.wrongQuestions.length > 0) {
                     document.getElementById('wrong-q-list').innerText = data.wrongQuestions.join(", ");
                     document.getElementById('wrong-questions-container').classList.remove('hidden');
                 } else {
-                    document.getElementById('wrong-q-list').innerText = "කිසිදු ප්‍රශ්නයක් වැරදී නැත! සියල්ල නිවැරදියි. 🎉";
+                    document.getElementById('wrong-q-list').innerText = "No wrong answers! Everything is correct. 🎉";
                     document.getElementById('wrong-questions-container').classList.add('hidden');
                 }
 
@@ -1286,9 +1286,9 @@
                 if (data.teacherView && data.explanations && data.explanations.length) {
                     lastPromoResult = data;
                     const pb = document.getElementById('promo-result');
-                    pb.innerHTML = '<h3 style="margin:10px 0 6px;">📘 විවරණ (ගුරු පරීක්ෂාව)</h3>' +
-                        '<p style="font-size:13px; color:#666; margin:0 0 8px;">උත්තර කිසිවක් නොදී Submit කළොත් සියලු ප්‍රශ්නවල විවරණ පෙනේ.</p>' +
-                        '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 විවරණ PDF ලෙස බලන්න</button>' +
+                    pb.innerHTML = '<h3 style="margin:10px 0 6px;">📘 Explanations (teacher preview)</h3>' +
+                        '<p style="font-size:13px; color:#666; margin:0 0 8px;">Submit without answering anything to see explanations for all questions.</p>' +
+                        '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 View explanations as PDF</button>' +
                         '<div class="exp-list">' + data.explanations.map(expHTML).join('') + '</div>';
                     pb.classList.remove('hidden');
                 }
@@ -1301,11 +1301,11 @@
                         h += '<div style="background:#fff3cd;border:1px solid #ffc107;color:#664d03;border-radius:8px;padding:12px;font-weight:bold;margin:10px 0;">' + esc(data.flagMessage) + '</div>';
                     }
                     if (data.attempt >= maxAttempts && !data.flagMessage) {
-                        h += '<h3 style="margin:10px 0 6px;">📘 වාර 3ම වැරදුණු ප්‍රශ්නවල පැහැදිලි කිරීම්</h3>';
+                        h += '<h3 style="margin:10px 0 6px;">📘 Explanations for questions wrong in all 3 attempts</h3>';
                         if (data.expMessage) h += '<p style="font-size:15px;color:#444;margin:0 0 8px;">' + esc(data.expMessage) + '</p>';
                         if (data.explanations && data.explanations.length) {
                             lastPromoResult = data;
-                            h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 පැහැදිලි කිරීම් බාගන්න (PDF)</button>' +
+                            h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 Download explanations (PDF)</button>' +
                                  '<div class="exp-list">' + data.explanations.map(expHTML).join('') + '</div>';
                         }
                     }
@@ -1327,11 +1327,11 @@
                 // කාලය අවසන් වී ස්වයංක්‍රීයව යවන විට internet නොමැති නම් තත්පර 10කට වරක් නැවත උත්සාහ කිරීම
                 setTimeout(function() { submitPaper(true); }, 10000);
             } else {
-                alert("ප්‍රතිඵල යැවීමේදී දෝෂයක් සිදු විය.");
+                alert("An error occurred while submitting your results.");
             }
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerText = "උත්තර යොමු කරන්න (Submit)";
+            submitBtn.innerText = "Submit Answers";
         }
     }
 </script>
