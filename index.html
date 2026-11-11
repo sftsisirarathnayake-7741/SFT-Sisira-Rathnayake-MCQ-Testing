@@ -381,9 +381,9 @@
         <!-- වැරදුණු ප්‍රශ්න පෙන්වන පෙට්ටිය -->
         <div id="wrong-questions-container" class="hidden">
             <div class="wrong-box">
-                <strong>⚠️ Questions you got wrong:</strong>
+                <strong>⚠️ Questions you got wrong (ඔබට වැරදුණු ප්‍රශ්න අංක):</strong>
                 <p id="wrong-q-list" style="margin-top: 5px; font-weight: bold;"></p>
-                <p style="font-size: 14px; margin-bottom: 0;">Revise these concepts and get these questions right in your next attempt!</p>
+                <p style="font-size: 14px; margin-bottom: 0;">Revise these concepts and get these questions right in your next attempt! (මෙම සිද්ධාන්ත නැවත කියවා බලා, ඊළඟ වාරයේදී එම ප්‍රශ්න නිවැරදි කරගන්න!)</p>
             </div>
         </div>
 
@@ -827,7 +827,7 @@
                 stopTimer();
                 if (!autoSubmitting) {
                     autoSubmitting = true;
-                    alert("⏱ Time is up! The answers you have given so far will be submitted automatically.");
+                    alert("⏱ Time is up! The answers you have given so far will be submitted automatically.\n(කාලය අවසන්! ඔබ දැනට ලබා දී ඇති උත්තර ස්වයංක්‍රීයව යොමු කෙරේ.)");
                     submitPaper(true);
                 }
             }
@@ -1078,14 +1078,14 @@
         lastPromoResult = data;
         document.getElementById('exam-sec').classList.add('hidden');
         document.getElementById('result-sec').classList.remove('hidden');
-        document.getElementById('score-display').innerText = "Your score: " + data.correct + " / " + data.total + "  (" + data.score.toFixed(0) + "%)";
+        document.getElementById('score-display').innerText = "Your score (ඔබේ ලකුණු): " + data.correct + " / " + data.total + "  (" + data.score.toFixed(0) + "%)";
         document.getElementById('attempt-display').innerText = "🎁 Free Promotional Paper – thank you for taking part!";
         document.getElementById('retry-btn').classList.add('hidden');
         document.getElementById('audio-result').classList.add('hidden');
         document.getElementById('wrong-questions-container').classList.add('hidden');
         let h = '';
         if (data.wrongQuestions && data.wrongQuestions.length > 0) {
-            h += '<p style="font-weight:bold; color:#721c24;">⚠️ Questions you got wrong: ' + esc(data.wrongQuestions.join(", ")) + '</p>';
+            h += '<p style="font-weight:bold; color:#721c24;">⚠️ Questions you got wrong (ඔබට වැරදුණු ප්‍රශ්න අංක): ' + esc(data.wrongQuestions.join(", ")) + '</p>';
         }
         if (data.link) {
             h += '<a class="wa-btn" href="' + esc(data.link) + '" target="_blank" rel="noopener">💬 Join our WhatsApp Group</a>';
@@ -1095,7 +1095,7 @@
             h += '<button type="button" onclick="downloadExplanations()" style="background:#198754;">📄 Download explanations for wrong answers (PDF)</button>';
             h += '<div class="exp-list">' + exps.map(expHTML).join('') + '</div>';
         } else {
-            h += '<p style="font-weight:bold; color:#198754;">🎉 All answers correct! Congratulations!</p>';
+            h += '<p style="font-weight:bold; color:#198754;">🎉 All answers correct! Congratulations! (සියලු ප්‍රශ්න නිවැරදියි! සුබ පැතුම්!)</p>';
         }
         const box = document.getElementById('promo-result');
         box.innerHTML = h;
@@ -1215,12 +1215,12 @@
 
         const answeredCount = Object.keys(answers).length;
         if (!auto && !promoMode && minAnswered > 0 && answeredCount < minAnswered) {
-            alert("⚠️ You must answer at least " + minAnswered + " questions to submit.\nYou have answered only " + answeredCount + " so far.");
+            alert("⚠️ You must answer at least " + minAnswered + " questions to submit.\nYou have answered only " + answeredCount + " so far.\n\n(Submit කිරීමට අවම වශයෙන් ප්‍රශ්න " + minAnswered + " කට උත්තර දිය යුතුය. ඔබ දැනට උත්තර දී ඇත්තේ ප්‍රශ්න " + answeredCount + " කට පමණි.)");
             return;
         }
 
         if (!auto && unansweredQuestions.length > 0) {
-            let confirmMsg = `⚠️ You have not answered the following questions yet:\nQuestion numbers: ${unansweredQuestions.join(", ")}\n\nDo you want to submit with these left blank (they will get no marks)?`;
+            let confirmMsg = `⚠️ You have not answered the following questions yet:\n(ඔබට තවමත් පහත ප්‍රශ්න සඳහා පිළිතුරු ලබාදී නොමැත:)\n\nQuestion numbers (ප්‍රශ්න අංක): ${unansweredQuestions.join(", ")}\n\nDo you want to submit with these left blank (they will get no marks)?\n(ඔබට මෙම හිස් ප්‍රශ්න එලෙසම, ලකුණු නොලැබෙන පරිදි Submit කිරීමට අවශ්‍යද?)`;
             
             if (!confirm(confirmMsg)) {
                 unansweredQuestions.forEach((qNo) => {
@@ -1269,14 +1269,14 @@
                 document.getElementById('promo-result').classList.add('hidden');
                 document.getElementById('exam-sec').classList.add('hidden');
                 document.getElementById('result-sec').classList.remove('hidden');
-                document.getElementById('score-display').innerText = "Your score: " + data.score.toFixed(2) + "%";
-                document.getElementById('attempt-display').innerText = "This was attempt " + data.attempt + " for this paper.";
+                document.getElementById('score-display').innerText = "Your score (ඔබේ ලකුණු): " + data.score.toFixed(2) + "%";
+                document.getElementById('attempt-display').innerText = "This was attempt " + data.attempt + " for this paper. (මෙය ඔබ මෙම පත්‍රය කළ " + data.attempt + " වන වාරයයි.)";
 
                 if (data.wrongQuestions && data.wrongQuestions.length > 0) {
                     document.getElementById('wrong-q-list').innerText = data.wrongQuestions.join(", ");
                     document.getElementById('wrong-questions-container').classList.remove('hidden');
                 } else {
-                    document.getElementById('wrong-q-list').innerText = "No wrong answers! Everything is correct. 🎉";
+                    document.getElementById('wrong-q-list').innerText = "No wrong answers! Everything is correct. 🎉 (කිසිදු ප්‍රශ්නයක් වැරදී නැත! සියල්ල නිවැරදියි.)";
                     document.getElementById('wrong-questions-container').classList.add('hidden');
                 }
 
