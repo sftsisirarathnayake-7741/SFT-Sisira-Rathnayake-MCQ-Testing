@@ -580,7 +580,7 @@
             <button type="button" class="promo-btn" onclick="promoQuickLogin()">Do the free paper</button>
         </div>
         <div style="text-align:center; margin-top:14px;"><button type="button" class="link-btn" onclick="openHelp('login')">💬 Password අමතකද? / Help</button></div>
-        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: portal-v2</p>
+        <p style="text-align:center; font-size:11px; color:#aaa; margin-top:20px;">v: portal-v2.1</p>
     </div>
 
     <!-- පළමු වරට පිවිසෙන ශිෂ්‍යයාගෙන් ධාරාව හා මාධ්‍යය ඇසීම -->
@@ -2001,8 +2001,19 @@
         return t;
     }
     function waOpen(msg) {
-        if (!WA_NUMBER) { alert("WhatsApp අංකය තවම සකසා නැත. (Google Sheet → Settings → WHATSAPP_NUMBER)"); return; }
-        window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+        if (WA_NUMBER) { window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank'); return; }
+        // අංකය තවම ලැබී නැත්නම් Server එකෙන් නැවත ඉල්ලා WhatsApp විවෘත කිරීම
+        const w = window.open('', '_blank');
+        api({ action: "catalog" }).then(function(d) {
+            if (d && d.whatsapp) {
+                WA_NUMBER = d.whatsapp;
+                const url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+                if (w) w.location.href = url; else location.href = url;
+            } else {
+                if (w) w.close();
+                alert("WhatsApp අංකය තවම සකසා නැත. (Google Sheet → Settings → WHATSAPP_NUMBER)");
+            }
+        }).catch(function() { if (w) w.close(); alert("Network error. නැවත උත්සාහ කරන්න."); });
     }
     function openHelp(kind, extra) {
         let m = 'Hello Sir 👋\n';
